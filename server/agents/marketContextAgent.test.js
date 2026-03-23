@@ -84,4 +84,43 @@ describe('marketContextAgent', () => {
       expect(quotes[0].ticker).toBe('AAPL');
     });
   });
+
+  describe('Cycle 4 — news sentiment per ticker (Finnhub)', () => {
+    const marketData = {
+      quotes: {
+        AAPL: { price: 185.50, changePercent: 1.25, name: 'Apple Inc.' },
+        TSLA: { price: 250.00, changePercent: -1.96, name: 'Tesla Inc.' },
+      },
+      news: {
+        AAPL: { sentimentScore: 0.72, headline: 'Apple beats earnings expectations' },
+        TSLA: { sentimentScore: 0.28, headline: 'Tesla misses delivery targets' },
+      },
+    };
+
+    it('returns a market_sentiment insight for each ticker with news', () => {
+      const results = marketContextAgent({ tickers: ['AAPL', 'TSLA'] }, marketData);
+      const sentiments = results.filter((i) => i.type === 'market_sentiment');
+      expect(sentiments).toHaveLength(2);
+    });
+
+    it('market_sentiment insight includes ticker and headline in message', () => {
+      const results = marketContextAgent({ tickers: ['AAPL'] }, marketData);
+      const insight = results.find((i) => i.type === 'market_sentiment' && i.ticker === 'AAPL');
+      expect(insight).toBeDefined();
+      expect(insight.message).toContain('AAPL');
+      expect(insight.message).toContain('Apple beats earnings expectations');
+    });
+
+    it('market_sentiment severity is info for positive sentiment (score >= 0.5)', () => {
+      const results = marketContextAgent({ tickers: ['AAPL'] }, marketData);
+      const insight = results.find((i) => i.type === 'market_sentiment' && i.ticker === 'AAPL');
+      expect(insight.severity).toBe('info');
+    });
+
+    it('market_sentiment severity is warning for negative sentiment (score < 0.5)', () => {
+      const results = marketContextAgent({ tickers: ['TSLA'] }, marketData);
+      const insight = results.find((i) => i.type === 'market_sentiment' && i.ticker === 'TSLA');
+      expect(insight.severity).toBe('warning');
+    });
+  });
 });
