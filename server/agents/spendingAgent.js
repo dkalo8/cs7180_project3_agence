@@ -19,7 +19,7 @@ const groupByCategory = (txns) =>
  * @param {Object} marketData - unused by this agent (consistent signature)
  * @returns {Array<{ type: string, message: string, severity: string }>}
  */
-function spendingAgent(userData, marketData) {
+function spendingAgent(userData, _marketData) {
   const transactions = userData?.transactions;
   if (!transactions || transactions.length === 0) return [];
 
