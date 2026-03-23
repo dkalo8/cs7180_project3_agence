@@ -40,4 +40,48 @@ describe('marketContextAgent', () => {
       }).not.toThrow();
     });
   });
+
+  describe('Cycle 3 — price + 24h change per ticker (Alpaca)', () => {
+    const marketData = {
+      quotes: {
+        AAPL: { price: 185.50, changePercent: 1.25, name: 'Apple Inc.' },
+        TSLA: { price: 250.00, changePercent: -1.96, name: 'Tesla Inc.' },
+      },
+      news: {},
+    };
+
+    it('returns a market_quote insight for each ticker', () => {
+      const results = marketContextAgent({ tickers: ['AAPL', 'TSLA'] }, marketData);
+      const quotes = results.filter((i) => i.type === 'market_quote');
+      expect(quotes).toHaveLength(2);
+    });
+
+    it('market_quote insight includes ticker, price, and changePercent in message', () => {
+      const results = marketContextAgent({ tickers: ['AAPL'] }, marketData);
+      const insight = results.find((i) => i.type === 'market_quote' && i.ticker === 'AAPL');
+      expect(insight).toBeDefined();
+      expect(insight.message).toContain('AAPL');
+      expect(insight.message).toContain('185.50');
+      expect(insight.message).toContain('1.25');
+    });
+
+    it('market_quote insight has severity info for positive change', () => {
+      const results = marketContextAgent({ tickers: ['AAPL'] }, marketData);
+      const insight = results.find((i) => i.type === 'market_quote' && i.ticker === 'AAPL');
+      expect(insight.severity).toBe('info');
+    });
+
+    it('market_quote insight has severity warning for negative change', () => {
+      const results = marketContextAgent({ tickers: ['TSLA'] }, marketData);
+      const insight = results.find((i) => i.type === 'market_quote' && i.ticker === 'TSLA');
+      expect(insight.severity).toBe('warning');
+    });
+
+    it('skips tickers missing from quotes without crashing', () => {
+      const results = marketContextAgent({ tickers: ['AAPL', 'MSFT'] }, marketData);
+      const quotes = results.filter((i) => i.type === 'market_quote');
+      expect(quotes).toHaveLength(1);
+      expect(quotes[0].ticker).toBe('AAPL');
+    });
+  });
 });
