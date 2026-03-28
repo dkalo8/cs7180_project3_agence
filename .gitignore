@@ -3,3 +3,10 @@ node_modules/
 *.log
 build/
 .DS_Store
+
+hw4-session-log.md
+p3.md
+
+# OMC runtime state (session scratch, not project code)
+.omc/
+server/.omc/
