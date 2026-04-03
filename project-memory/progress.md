@@ -38,12 +38,12 @@ _Last updated: 2026-03-28_
 ### NEXT: Remaining 4 Agents
 Build each via TDD (red → green → commit). They are pure functions, zero external dependencies — fastest wins.
 
-1. **`server/agents/anomalyAgent.js`** ← START HERE
+1. **`server/agents/anomalyAgent.js`** ← IN PROGRESS (stub + tests scaffolded, implementation TODO)
    - Input: `userData` (`{ transactions, balances }`)
    - Output: `[{ type, message, severity, amount, merchant }]`
    - Logic: flag transactions that are statistically unusual (large single charge, duplicate merchant, round-number amounts, new merchant category)
 
-2. **`server/agents/goalsAgent.js`**
+2. **`server/agents/goalsAgent.js`** ← IN PROGRESS (stub + tests scaffolded, implementation TODO)
    - Input: `userData` (`{ goals, transactions, balances }`)
    - Output: `[{ type, goalName, message, pace, projectedDate }]`
    - Logic: compare current savings pace vs goal target date, flag behind/on-track/ahead

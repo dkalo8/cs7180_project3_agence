@@ -4,7 +4,9 @@ node_modules/
 build/
 .DS_Store
 
+# Temp Homework Files
 hw4-session-log.md
+hw5.md
 p3.md
 
 # OMC runtime state (session scratch, not project code)
