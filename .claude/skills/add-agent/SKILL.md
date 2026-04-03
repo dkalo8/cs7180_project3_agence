@@ -10,10 +10,20 @@ example: /add-agent anomalyAgent userData
 
 Scaffold a new Agence agent following the project's architecture rules.
 
-**What's new in v2 vs v1:**
-- Checks `orchestrator/index.js` and `orchestrator/index.test.js` — patches them if the new agent isn't already wired
-- Updates `project-memory/progress.md` to mark the agent as in-progress
-- Seeds cycle 3-5 tests with domain-specific stubs based on agent type (not generic todos)
+## Version History
+
+### v1.0.0 — Initial (see `SKILL-v1.md`)
+Created agent stub + TDD test file. Tested on `anomalyAgent`.
+
+**Gaps discovered running v1 on `anomalyAgent`:**
+
+1. **ESLint `no-unused-vars` failure** — stub generates `function anomalyAgent(userData)` but since the body is just `return []`, ESLint flags `userData` as unused. Fix: use `_userData` prefix on stub params.
+2. **Orchestrator not checked** — after scaffolding, the developer still had to manually verify the new agent was wired in `orchestrator/index.js` and `orchestrator/index.test.js`. Easy to forget, causes silent failures if a new agent is added post-MVP.
+3. **`progress.md` not updated** — the skill created files but didn't mark the agent as in-progress anywhere, so the project tracking was out of sync.
+4. **Generic cycle 3-5 stubs** — all agents got the same `test.todo('implement core logic tests here')` placeholders regardless of agent type, giving no useful starting point for domain-specific TDD.
+
+### v2.0.0 — Current
+All four gaps fixed. Tested on `goalsAgent` — orchestrator already wired (reported correctly), `progress.md` updated automatically, domain-specific stubs seeded.
 
 ## Architecture Rules (never violate)
 - Agent MUST be a pure function: no side effects, no DB calls, no API calls
