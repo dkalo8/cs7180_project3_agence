@@ -58,12 +58,17 @@ _Last updated: 2026-04-06_
 - `client/vercel.json` — SPA rewrite rule for React Router
 - Render PostgreSQL (agence_db) — schema applied, SSL wired
 
-### Integration Tests (new)
+### Integration Tests
 - `server/tests/integration/auth.integration.test.js` — 7 tests: register→login round-trip (real bcrypt + JWT), middleware rejection tests. Mocks only pg Pool.
 - `server/tests/integration/insights.integration.test.js` — 4 tests: full pipeline JWT→queries→orchestrator→judge. Mocks only pg Pool + orchestrator/judge.
 
+### E2E Tests (Playwright)
+- `e2e/tests/auth-flow.spec.js` — 4/4 passing against live Vercel URL: redirect to /login, login page form, register page form, register→dashboard flow. 2 additional tests skip unless E2E_EMAIL/E2E_PASSWORD set.
+
 ### Test suite
 - **118/118 passing** across 14 test suites (server only)
+- E2E: 4/4 passing (Playwright, Chromium, live Vercel URL)
+- Coverage: ~95% statements, ~83% branches (70% threshold enforced in CI)
 - Lint: clean
 - GitHub Actions: green ✅
 
@@ -139,5 +144,5 @@ _Clear this section at the start of each session and replace with current work._
 **Session 2026-04-06 (in progress):**
 - Phase 4 (Claude Code features): settings.json hooks, .mcp.json, insight-reviewer agent, run-insights skill ✅
 - Phase 5 (CI/CD): GitHub Actions 5-job pipeline (green), Render + Vercel deployed, pre-commit secrets detection ✅
-- Phase 6 (Testing): 11 integration tests added (118/118 total) ✅
-- Next: Jest coverage reporting, Playwright E2E, then Team Process (PRs/issues)
+- Phase 6 (Testing): integration tests, Jest coverage (70% threshold), Playwright E2E (4/4) ✅
+- Next: Phase 7 Team Process (PRs, issues, sprint docs)

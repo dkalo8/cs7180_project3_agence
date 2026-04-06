@@ -79,8 +79,8 @@
 
 ## Phase 6: Testing Gaps (~10 hrs, +5 pts)
 
-- [ ] Configure Playwright for E2E — at least 1 test for main user flow (login → see insights)
-- [ ] Enable Jest coverage reporting — enforce 70%+ threshold in CI
+- [x] Configure Playwright for E2E — 4/4 tests passing against live Vercel URL (`e2e/tests/auth-flow.spec.js`)
+- [x] Enable Jest coverage reporting — 70% threshold enforced in CI, ~95% actual
 - [x] Add at least 3 integration tests (auth flow, insights endpoint) — 11 tests, 118/118 total
 
 ---
