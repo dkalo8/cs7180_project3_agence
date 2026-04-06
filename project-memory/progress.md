@@ -45,7 +45,7 @@ Build each via TDD (red → green → commit). They are pure functions, zero ext
    - Output: `[{ type, message, severity, ticker? }]`
    - Logic: concentration risk (any position > 20% of portfolio), unrealized P&L flags, cash drag
 
-2. **`server/agents/autopilotAgent.js`**
+2. **`server/agents/autopilotAgent.js`** ← IN PROGRESS (stub + tests scaffolded, implementation TODO)
    - Input: `userData`, `marketData`
    - Output: `[{ type, action, ticker, quantity, reason }]`
    - Logic: rule-based paper trade signals (e.g. rebalance when concentration > threshold, buy on dip)
