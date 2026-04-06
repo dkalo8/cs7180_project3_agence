@@ -1,6 +1,6 @@
 'use strict';
 
-process.env.JWT_SECRET = 'test-secret';
+process.env.JWT_SECRET = 'test-secret'; // pragma: allowlist secret
 process.env.DATABASE_URL = 'postgresql://localhost/agence_dev';
 
 const request = require('supertest');
@@ -10,14 +10,25 @@ const app = require('../index');
 jest.mock('../db/queries');
 jest.mock('../orchestrator/index');
 jest.mock('../orchestrator/judge');
+jest.mock('../services/alpaca');
+jest.mock('../services/finnhub');
 
 const queries = require('../db/queries');
 const { runOrchestrator } = require('../orchestrator/index');
 const { runJudge } = require('../orchestrator/judge');
+const alpacaService = require('../services/alpaca');
+const finnhubService = require('../services/finnhub');
 
-const validToken = jwt.sign({ userId: 'uuid-1' }, 'test-secret');
+const validToken = jwt.sign({ userId: 'uuid-1' }, 'test-secret'); // pragma: allowlist secret
 
-beforeEach(() => jest.clearAllMocks());
+beforeEach(() => {
+  jest.clearAllMocks();
+  // Default Alpaca mocks — no positions
+  alpacaService.getPositions.mockResolvedValue([]);
+  alpacaService.getAccount.mockResolvedValue({ cash: '1000', equity: '1000' });
+  alpacaService.getSnapshots.mockResolvedValue({});
+  finnhubService.getLatestNews.mockResolvedValue(null);
+});
 
 // ---------------------------------------------------------------------------
 // GET /api/v1/insights
