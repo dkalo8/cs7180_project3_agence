@@ -40,7 +40,7 @@ _Last updated: 2026-04-03_
 ### NEXT: Remaining 4 Agents
 Build each via TDD (red → green → commit). They are pure functions, zero external dependencies — fastest wins.
 
-1. **`server/agents/portfolioAgent.js`** ← NEXT
+1. **`server/agents/portfolioAgent.js`** ← IN PROGRESS (stub + tests scaffolded, implementation TODO)
    - Input: `marketData` (`{ positions, quotes }`)
    - Output: `[{ type, message, severity, ticker? }]`
    - Logic: concentration risk (any position > 20% of portfolio), unrealized P&L flags, cash drag
