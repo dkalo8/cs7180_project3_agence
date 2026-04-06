@@ -70,6 +70,61 @@ npm test           # Jest — must pass clean before every commit
 npm run test:watch # TDD mode
 ```
 
+## Architecture Diagram
+
+```mermaid
+flowchart TD
+    User["👤 User (Browser)"]
+
+    subgraph Frontend["Frontend — React (Vercel)"]
+        UI["Login / Dashboard / Insights"]
+        AC["AuthContext (JWT)"]
+    end
+
+    subgraph Backend["Backend — Express (Render)"]
+        Auth["POST /auth/register\nPOST /auth/login"]
+        Insights["GET /insights"]
+        JWT["JWT Middleware"]
+
+        subgraph Orchestrator["Orchestrator"]
+            PA["Promise.all"]
+            SA["spendingAgent"]
+            AN["anomalyAgent"]
+            GA["goalsAgent"]
+            PF["portfolioAgent"]
+            MC["marketContextAgent"]
+            AP["autopilotAgent"]
+            JU["LLM-as-Judge\n(claude-sonnet-4-6)"]
+        end
+    end
+
+    subgraph DataLayer["Data Layer"]
+        PG[("PostgreSQL\n(agence_db)")]
+        QS["queries.js\n(SQL quarantine)"]
+    end
+
+    subgraph ExternalAPIs["External APIs"]
+        Plaid["Plaid\n(transactions/balances)"]
+        Alpaca["Alpaca Paper\n(positions/quotes/trades)"]
+        Finnhub["Finnhub\n(news/sentiment)"]
+        Claude["Anthropic API\n(claude-sonnet-4-6)"]
+    end
+
+    User -->|HTTPS| Frontend
+    UI -->|axios + Bearer token| Auth
+    UI -->|axios + Bearer token| Insights
+    Auth -->|bcrypt + JWT| PG
+    Insights --> JWT --> PA
+    PA --> SA & AN & GA & PF & MC & AP
+    SA & AN & GA -->|userData| Plaid
+    PF & MC & AP -->|marketData| Alpaca
+    MC -->|news| Finnhub
+    PA -->|agentOutputs| JU
+    JU -->|ranked insights| Claude
+    QS <-->|pool.query| PG
+    Backend <--> QS
+```
+
 ## Architecture Notes
 
 - **Agent purity** — agents are pure functions with no side effects, no DB calls, no API calls
@@ -77,6 +132,19 @@ npm run test:watch # TDD mode
 - **SQL quarantine** — all queries go through `server/db/queries.js`, zero exceptions
 - **Paper trading only** — `ALPACA_PAPER=true` is hardcoded and never toggled off
 
+## Live Deployment
+
+| | URL |
+|---|---|
+| Frontend | https://agence-flame.vercel.app |
+| Backend API | https://cs7180-project3-agence.onrender.com |
+| Health check | https://cs7180-project3-agence.onrender.com/health |
+
 ## Status
+
+- **118/118 tests passing** (Jest unit + integration)
+- **4/4 E2E tests passing** (Playwright, live Vercel URL)
+- **Coverage**: ~95% statements, 70%+ enforced in CI
+- CI: GitHub Actions (lint → test → coverage → build → security → E2E → AI review)
 
 See `project-memory/progress.md` for current build state and next steps.
