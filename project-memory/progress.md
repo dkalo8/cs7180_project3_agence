@@ -22,7 +22,7 @@ _Last updated: 2026-04-06_
 - `server/orchestrator/index.js` — Promise.all over all 6 agents, safeRun isolation. 8 tests.
 - `server/orchestrator/judge.js` — LLM-as-judge via claude-sonnet-4-6, explicit scoring dimensions, fallback. 9 tests.
 
-### Backend (core complete)
+### Backend (complete)
 - `server/db/schema.sql` — 6 tables: users, accounts, transactions, balances, goals, trades. Applied to agence_dev (local) + agence_db (Render).
 - `server/db/queries.js` — all SQL quarantined here. SSL enabled for Render. 12 tests.
 - `server/middleware/auth.js` — JWT Bearer verification, attaches userId to req. 4 tests.
@@ -30,18 +30,23 @@ _Last updated: 2026-04-06_
 - `server/index.js` — Express app, CORS, JSON, /health, all routes registered.
 - `server/routes/auth.js` — POST /api/v1/auth/register + /login. 8 tests.
 - `server/routes/insights.js` — GET /api/v1/insights (orchestrator → judge pipeline). 4 tests.
-- `server/routes/accounts.js` — stub (Plaid integration pending)
-- `server/routes/portfolio.js` — stub (Alpaca integration pending)
-- `server/routes/trades.js` — stub (Alpaca integration pending)
+- `server/routes/accounts.js` — POST /link-token + POST /exchange (Plaid). 6 tests. ✅
+- `server/routes/portfolio.js` — GET /portfolio (Alpaca positions + P&L). 5 tests. ✅
+- `server/routes/trades.js` — POST /trades + GET /trades (paper trade via Alpaca). 8 tests. ✅
+- `server/routes/goals.js` — GET /goals + POST /goals (savings goals). 6 tests. ✅
+- `server/services/plaid.js` — Plaid SDK wrapper (link token, exchange, transactions, balances). ✅
+- `server/services/alpaca.js` — Alpaca SDK wrapper (positions, account, snapshots, placeOrder). ✅
 
-### Frontend (scaffold complete, unstyled)
+### Frontend (complete)
 - React Router with protected routes (PrivateRoute → /login redirect)
 - AuthContext — JWT storage, login/logout
 - Login + Register pages — wired to /api/v1/auth endpoints ✅ working in production
-- Dashboard — nav to all sections
-- Insights page — calls GET /api/v1/insights, renders ranked insight feed
-- Goals + Portfolio pages — placeholder (pending Plaid/Alpaca wiring)
-- No CSS styling yet
+- Dashboard — nav to all sections + PlaidLink button for bank connection ✅
+- Insights page — calls GET /api/v1/insights, renders ranked insight feed ✅
+- Portfolio page — Alpaca positions table with P&L color coding ✅
+- Goals page — create goals form + progress bar list ✅
+- `client/src/components/PlaidLink.js` — Plaid Link flow (link token → open → exchange) ✅
+- Full CSS: dark nav, card grid, severity badges, portfolio table, auth pages, Plaid button ✅
 
 ### Claude Code Features (complete)
 - `.claude/settings.json` — PreToolUse ESLint hook on server JS edits, PostToolUse test hook on git push
@@ -66,7 +71,7 @@ _Last updated: 2026-04-06_
 - `e2e/tests/auth-flow.spec.js` — 4/4 passing against live Vercel URL: redirect to /login, login page form, register page form, register→dashboard flow. 2 additional tests skip unless E2E_EMAIL/E2E_PASSWORD set.
 
 ### Test suite
-- **118/118 passing** across 14 test suites (server only)
+- **143/143 passing** across 18 test suites (server only)
 - E2E: 4/4 passing (Playwright, Chromium, live Vercel URL)
 - Coverage: ~95% statements, ~83% branches (70% threshold enforced in CI)
 - Lint: clean
@@ -76,33 +81,19 @@ _Last updated: 2026-04-06_
 
 ## Next Steps (in order)
 
-### NEXT: Testing Gaps (+5 pts)
-1. Integration tests in `server/tests/integration/` (auth flow + insights endpoint)
-2. Playwright E2E — login → see insights flow
-3. Jest coverage reporting (70%+ threshold)
-
-### Then: Remaining Backend Routes
-- `accounts.js` — Plaid Link token + account sync
-- `portfolio.js` — Alpaca positions + P&L
-- `trades.js` — paper trade execution
-
-### Then: Frontend Polish
-- CSS / styling (make it look like a real product)
-- Goals UI — create + track savings goals
-- Portfolio UI — Alpaca positions display
-- Plaid Link component
-
-### Then: Team Process / PRs (+variable pts)
-- Enable branch-per-feature workflow
-- GitHub Issues with acceptance criteria
-- PRs with AI disclosure metadata
-- Sprint documentation
-
-### Then: Documentation & Demo
-- Mermaid architecture diagram in README
+### Remaining: Phase 8 Documentation & Demo (user handles)
 - Blog post (Medium/dev.to, 1500+ words)
 - Screencast (5–10 min)
-- Reflection essay + showcase form
+- Reflection essay (500 words)
+- Showcase form submission
+
+### Optional: Deploy updated backend to Render
+- Push `server/routes/goals.js` + other new routes live
+- Redeploy frontend to Vercel with PlaidLink + Goals UI
+
+### Optional: insights.js marketData wiring
+- Currently passes empty `{}` as marketData to orchestrator
+- Could pull Alpaca positions/quotes for richer portfolio + autopilot insights
 
 ---
 
@@ -141,9 +132,12 @@ _Last updated: 2026-04-06_
 
 _Clear this section at the start of each session and replace with current work._
 
-**Session 2026-04-06 (in progress):**
+**Session 2026-04-06 (continued):**
 - Phase 4 (Claude Code features): settings.json hooks, .mcp.json, insight-reviewer agent, run-insights skill ✅
 - Phase 5 (CI/CD): GitHub Actions 5-job pipeline (green), Render + Vercel deployed, pre-commit secrets detection ✅
 - Phase 6 (Testing): integration tests, Jest coverage (70% threshold), Playwright E2E (4/4) ✅
 - Phase 7 (Team Process): 5 GitHub Issues, CSS PR #6 merged, sprint-1.md + sprint-2.md ✅
-- Next: Phase 8 Documentation & Demo (blog, screencast, reflection)
+- Backend routes complete: accounts.js, portfolio.js, trades.js, goals.js + Plaid/Alpaca services ✅
+- Frontend complete: PlaidLink component, Goals.js with progress bars, Portfolio.js ✅
+- Test suite: 143/143, 18 suites, lint clean ✅
+- Phase 8 Documentation & Demo — remaining (user handles blog/screencast/reflection)
