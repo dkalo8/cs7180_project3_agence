@@ -51,14 +51,14 @@
 
 ---
 
-## Phase 4: Claude Code Features (~8 hrs, +10 pts) ← NEXT
+## Phase 4: Claude Code Features (~8 hrs, +10 pts) ✅
 
-- [ ] **Add a second custom skill** — `/wire-route` or `/run-insights`
-- [ ] **Configure hooks in `.claude/settings.json`:**
-  - [ ] `PreToolUse` hook: run ESLint on file edits
-  - [ ] `PostToolUse` hook: run tests after `git push`
-- [ ] **Create `.mcp.json`** in repo root with postgres + context7 config
-- [ ] **Create `.claude/agents/`** directory with at least 1 sub-agent
+- [x] **Add a second custom skill** — `/run-insights` (`.claude/skills/run-insights/SKILL.md`)
+- [x] **Configure hooks in `.claude/settings.json`:**
+  - [x] `PreToolUse` hook: run ESLint on file edits
+  - [x] `PostToolUse` hook: run tests after `git push`
+- [x] **Create `.mcp.json`** in repo root with postgres + context7 config
+- [x] **Create `.claude/agents/`** directory with at least 1 sub-agent (`insight-reviewer.md`)
 
 ---
 

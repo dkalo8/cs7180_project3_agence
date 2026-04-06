@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=\"$CLAUDE_TOOL_INPUT_FILE_PATH\"; if echo \"$FILE\" | grep -q 'server/.*\\.js$'; then cd \"/Users/danielkalo/Documents/CS 7180 - Vibe Coding (Python)/Project 3 - Agence/server\" && npx eslint \"$FILE\" 2>&1 | head -30; fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT_COMMAND\" | grep -q 'git push'; then cd \"/Users/danielkalo/Documents/CS 7180 - Vibe Coding (Python)/Project 3 - Agence/server\" && npm test 2>&1 | tail -10; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
