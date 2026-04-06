@@ -70,9 +70,10 @@
   - [x] Security scan (`npm audit`)
   - [x] AI PR review (`claude-code-action`)
   - [ ] Integration tests (pending — test files not written yet)
-- [ ] Configure Vercel project — preview deploys on PR, production on merge to main
-- [ ] Deploy backend API (Railway or Render)
-- [ ] Set up pre-commit secrets detection
+- [ ] Configure Vercel project — preview deploys on PR (blocked: dkalo8 GitHub can't link to existing Vercel account; CLI deploy working at https://agence-flame.vercel.app)
+- [x] Deploy backend API — Render (https://cs7180-project3-agence.onrender.com)
+- [x] Deploy frontend — Vercel (https://agence-flame.vercel.app)
+- [x] Set up pre-commit secrets detection — detect-secrets v1.5.0 + .secrets.baseline
 
 ---
 
