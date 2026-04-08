@@ -58,6 +58,9 @@ Never accumulate multiple unverified changes before committing. Small steps, ver
 ## On Compaction
 Preserve these rules above all else: API boundary map (Alpaca/Plaid/Finnhub responsibilities), ALPACA_PAPER=false prohibition, SQL quarantine, agent purity, parallel execution via Promise.all.
 
+## Communication Style
+- **Always use caveman mode** — invoke `/caveman full` at the start of every session. Terse, no fluff, fragments OK. If session starts without it active, invoke it immediately before responding.
+
 ## Reminders
 - Alpaca = prices/portfolio/trades. Plaid = banking only. Finnhub = news/sentiment only.
 - Never set ALPACA_PAPER=false
