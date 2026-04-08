@@ -19,6 +19,8 @@ hw5-retrospective.md
 screenshots/
 original-proposal.md
 *.png
+fixes.md
+aesthetic-redesign.md
 
 # OMC runtime state (session scratch, not project code)
 .omc/
