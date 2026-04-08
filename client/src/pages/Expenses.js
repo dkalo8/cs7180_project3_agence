@@ -43,7 +43,7 @@ function buildCategories(transactions) {
 
 const MONTH_OPTIONS = [
   { label: 'All',        value: 0 },
-  { label: 'This Month', value: 1 },
+  { label: '1M', value: 1 },
   { label: '3 Months',   value: 3 },
   { label: '6 Months',   value: 6 },
 ];
