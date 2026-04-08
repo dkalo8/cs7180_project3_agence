@@ -9,6 +9,7 @@ import Goals from './pages/Goals';
 import Portfolio from './pages/Portfolio';
 import Expenses from './pages/Expenses';
 import Watchlist from './pages/Watchlist';
+import Chat from './pages/Chat';
 import './App.css';
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/portfolio" element={<PrivateRoute><Portfolio /></PrivateRoute>} />
           <Route path="/expenses" element={<PrivateRoute><Expenses /></PrivateRoute>} />
           <Route path="/watchlist" element={<PrivateRoute><Watchlist /></PrivateRoute>} />
+          <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

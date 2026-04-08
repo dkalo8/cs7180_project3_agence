@@ -11,6 +11,7 @@ export default function AppNav({ title }) {
         <Link to="/insights">Insights</Link>
         <Link to="/expenses">Expenses</Link>
         <Link to="/watchlist">Watchlist</Link>
+        <Link to="/chat">Ask Agence</Link>
         <Link to="/goals">Goals</Link>
         <Link to="/portfolio">Portfolio</Link>
         <button onClick={logout}>Sign out</button>
