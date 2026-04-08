@@ -22,4 +22,28 @@
 - Bug fixes: tx.date is full ISO string from DB → use new Date(tx.date); date display truncated to YYYY-MM-DD
 - Label fix: "This Month" → "1M". User added "1 Year" + spelled-out labels (1 Month / 3 Months / 6 Months / 1 Year).
 
-## Next: 9C Watchlist, 9D AI Chat
+## 9C: Watchlist ✅
+- watchlist DB table via migrate.js (idempotent, runs on server startup)
+- queries.js: addToWatchlist, getWatchlistByUserId, removeFromWatchlist
+- server/routes/watchlist.js: GET/POST/DELETE /api/v1/watchlist (upcases ticker)
+- server/agents/watchlistAgent.js: pure fn; mover ≥3% → watchlist_mover, neg sentiment → watchlist_sentiment
+- orchestrator: watchlistAgent added to Promise.all (7 agents total)
+- Watchlist.js: add ticker form, table with remove button, empty state
+- AppNav: /watchlist link added
+- 167/167 tests
+
+## 9D: AI Chat Assistant ✅
+- server/routes/chat.js: POST /api/v1/chat — loads portfolio/accounts/goals/transactions in parallel, injects as Claude Sonnet 4.6 system prompt, multi-turn history support
+- ChatWidget.js: floating 💬 FAB bottom-right, collapsible popup, persists across navigation via AuthShell in App.js
+- react-markdown + remark-gfm: tables, bold, lists render properly in bubbles
+- Assistant bubbles stretch full width; last table column white-space: nowrap (no number breaking)
+- Removed Chat.js page + /chat route — chat is now a widget not a page
+- CI fixes: coveragePathIgnorePatterns excludes services/ and migrate.js; E2E test updated for new dashboard (no h2 "Welcome back")
+- 173/173 tests
+
+## Next: 9E Polish Pass
+- Trade history tab on Portfolio.js
+- Empty states with CTAs
+- Settings page
+- Goal progress on dashboard
+- Responsive CSS

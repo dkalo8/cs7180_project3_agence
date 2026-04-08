@@ -134,6 +134,7 @@ _Last updated: 2026-04-06_
 - 9A Dashboard redesign ✅ — Schwab-style 2-col layout, Recharts AreaChart, holdings, insights rail. 147 tests.
 - 9B Expenses page ✅ — category bars + tx table, client-side grouping, "All" default. 152 tests.
 - 9C Watchlist ✅ — GET/POST/DELETE /api/v1/watchlist, watchlistAgent, migrate.js auto-creates table on startup. 167 tests.
-- 9D AI Chat ✅ — POST /api/v1/chat (Claude Sonnet 4.6, financial context injected), Chat.js page, "Ask Agence" in AppNav. 173 tests.
+- 9D AI Chat ✅ — POST /api/v1/chat (Claude Sonnet 4.6, financial context injected), floating ChatWidget (bottom-right FAB), react-markdown + remark-gfm for table rendering. 173 tests.
+- CI fixed ✅ — coveragePathIgnorePatterns excludes services/; E2E test updated for rewritten dashboard.
 - Local dev CORS unresolved — UI verified on Vercel only.
 - Next: 9E Polish (trade history tab, empty states, Settings page, goal on dashboard, responsive CSS)
