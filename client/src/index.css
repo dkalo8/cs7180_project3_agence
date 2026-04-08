@@ -554,6 +554,120 @@ a:hover { text-decoration: underline; }
 }
 
 /* ============================================================
+   Expenses page
+   ============================================================ */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.expenses-section {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.category-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.category-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.category-bar-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.category-bar-totals {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.category-bar-track {
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.category-bar-fill {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.tx-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.tx-table th {
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 2px solid #e2e8f0;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tx-table td {
+  padding: 0.6rem 0.6rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+}
+
+.tx-table td.right, .tx-table th.right { text-align: right; }
+
+.tx-date { color: #64748b; font-size: 0.82rem; white-space: nowrap; }
+
+.tx-category {
+  background: #f1f5f9;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.75rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.muted { color: #94a3b8; font-size: 0.875rem; margin: 0.5rem 0; }
+
+.empty-state {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 2.5rem;
+  text-align: center;
+}
+
+.empty-state p { margin: 0 0 0.5rem; font-size: 0.95rem; color: #1e293b; }
+
+/* ============================================================
    Error / utility
    ============================================================ */
 .error {

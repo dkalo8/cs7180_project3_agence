@@ -10,6 +10,7 @@ const portfolioRouter = require('./routes/portfolio');
 const tradesRouter = require('./routes/trades');
 const insightsRouter = require('./routes/insights');
 const goalsRouter = require('./routes/goals');
+const transactionsRouter = require('./routes/transactions');
 const errorHandler = require('./middleware/errors');
 
 const app = express();
@@ -39,6 +40,7 @@ app.use('/api/v1/portfolio', portfolioRouter);
 app.use('/api/v1/trades', tradesRouter);
 app.use('/api/v1/insights', insightsRouter);
 app.use('/api/v1/goals', goalsRouter);
+app.use('/api/v1/transactions', transactionsRouter);
 
 // Centralized error handler (must be last)
 app.use(errorHandler);
