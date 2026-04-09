@@ -119,7 +119,7 @@ export default function Watchlist() {
               </tbody>
             </table>
             <p className="muted" style={{ marginTop: '0.75rem', fontSize: '0.8rem' }}>
-              Watched tickers appear in AI Insights — movers and sentiment alerts are surfaced automatically.
+              AI Insights flags watched tickers when they move ≥3% or show negative news sentiment.
             </p>
           </section>
         )}
