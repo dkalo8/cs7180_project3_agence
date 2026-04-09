@@ -114,8 +114,10 @@
 ### 8E: Bug Fixes (do first — unblock other features)
 > Bugs found during testing — fix before adding more features
 
-- [ ] **Portfolio trade error** — adding a stock returns an error in `Portfolio.js`; investigate `POST /api/v1/trades` and Alpaca paper trade execution; see `portfolio.png`
+- [x] **Portfolio trade error (431)** — fixed: trades route now surfaces Alpaca error message instead of forwarding upstream status codes; error handler no longer bleeds 3rd-party 4xx to client
+- [ ] **Trade "unauthorized"** — Alpaca returning 401 on paper trades; **not a code bug** — verify `ALPACA_KEY_ID` + `ALPACA_SECRET_KEY` env vars on Render dashboard match paper account credentials
 - [ ] **Dashboard balance wiring** — after buying stock via Portfolio, dashboard should reflect updated equity, positions, and sparkline history; verify `GET /api/v1/portfolio` + `GET /api/v1/portfolio/history` re-fetch correctly after trade
+- [x] **AI chat full context** — chat route now loads watchlist + trade history alongside transactions/accounts/goals/positions; system prompt gives Claude complete visibility into all user data
 
 ### 8F: Watchlist Real-Time Prices
 > Enrich watchlist with live Alpaca data

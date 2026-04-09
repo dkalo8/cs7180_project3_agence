@@ -22,6 +22,8 @@ beforeEach(() => {
   queries.getTransactionsByUserId.mockResolvedValue([]);
   queries.getAccountsByUserId.mockResolvedValue([]);
   queries.getGoalsByUserId.mockResolvedValue([]);
+  queries.getWatchlistByUserId.mockResolvedValue([]);
+  queries.getTradesByUserId.mockResolvedValue([]);
   alpacaService.getAccount.mockResolvedValue({ cash: '1000', equity: '5000' });
   alpacaService.getPositions.mockResolvedValue([]);
 });
@@ -98,6 +100,12 @@ describe('POST /api/v1/chat', () => {
     queries.getGoalsByUserId.mockResolvedValue([
       { id: 'g1', name: 'Emergency Fund', target: 5000, current: 2000, monthly_contribution: 200 },
     ]);
+    queries.getWatchlistByUserId.mockResolvedValue([
+      { ticker: 'TSLA', added_at: '2026-04-01' },
+    ]);
+    queries.getTradesByUserId.mockResolvedValue([
+      { ticker: 'AAPL', action: 'buy', quantity: 5, price: 195.0, created_at: '2026-04-01' },
+    ]);
     alpacaService.getAccount.mockResolvedValue({ cash: '1200', equity: '8000' });
 
     const mockCreate = jest.fn().mockResolvedValue({
@@ -115,5 +123,7 @@ describe('POST /api/v1/chat', () => {
     const callArgs = mockCreate.mock.calls[0][0];
     expect(callArgs.system).toContain('Emergency Fund');
     expect(callArgs.system).toContain('8000');
+    expect(callArgs.system).toContain('TSLA');
+    expect(callArgs.system).toContain('AAPL');
   });
 });

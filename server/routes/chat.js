@@ -17,11 +17,13 @@ router.post('/', authMiddleware, async (req, res, next) => {
 
     const { userId } = req;
 
-    // Load financial context in parallel
-    const [transactions, accounts, goals, rawPositions, account] = await Promise.all([
+    // Load full financial context in parallel
+    const [transactions, accounts, goals, watchlist, trades, rawPositions, account] = await Promise.all([
       queries.getTransactionsByUserId(userId).catch(() => []),
       queries.getAccountsByUserId(userId).catch(() => []),
       queries.getGoalsByUserId(userId).catch(() => []),
+      queries.getWatchlistByUserId(userId).catch(() => []),
+      queries.getTradesByUserId(userId).catch(() => []),
       alpacaService.getPositions().catch(() => []),
       alpacaService.getAccount().catch(() => ({ cash: '0', equity: '0' })),
     ]);
@@ -47,7 +49,15 @@ router.post('/', authMiddleware, async (req, res, next) => {
       `  - ${p.symbol}: ${p.qty} shares @ $${parseFloat(p.current_price).toFixed(2)}`
     ).join('\n');
 
-    const systemPrompt = `You are Agence, an AI financial copilot. You have access to the user's real financial data. Be concise, specific, and actionable.
+    const watchlistText = watchlist.map(w =>
+      `  - ${w.ticker} (added ${String(w.added_at).slice(0, 10)})`
+    ).join('\n');
+
+    const tradesText = trades.slice(0, 20).map(t =>
+      `  - ${String(t.created_at || t.date || '').slice(0, 10)} ${t.action?.toUpperCase()} ${t.quantity}x ${t.ticker} @ $${parseFloat(t.price || 0).toFixed(2)}`
+    ).join('\n');
+
+    const systemPrompt = `You are Agence, an AI financial copilot. You have full access to the user's real financial data across all sections of the app. Be concise, specific, and actionable.
 
 PORTFOLIO SUMMARY:
 - Total equity: $${equity.toFixed(2)}
@@ -63,10 +73,16 @@ ${accountsText || '  (no linked accounts)'}
 SAVINGS GOALS:
 ${goalsText || '  (no goals set)'}
 
+WATCHLIST (tickers user is tracking):
+${watchlistText || '  (no tickers watched)'}
+
+RECENT TRADES (last 20):
+${tradesText || '  (no trades yet)'}
+
 RECENT TRANSACTIONS (last 20):
 ${recentTx || '  (no transactions)'}
 
-Answer questions about the user's finances using this data. If you don't have enough data to answer precisely, say so. Never fabricate numbers not shown above.`;
+You have complete visibility into the user's financial life: spending, investments, goals, watchlist, and trade history. Answer any question using this data. Never fabricate numbers not shown above.`;
 
     // Build messages array: history + new user message
     const messages = [
