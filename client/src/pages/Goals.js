@@ -61,7 +61,7 @@ export default function Goals() {
     <div className="page">
       <AppNav />
       <main>
-        <h3 style={{ marginBottom: '1rem' }}>Add a Goal</h3>
+        <h3 className="section-heading">Add a Goal</h3>
         <form onSubmit={handleSubmit} style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '0.6rem', maxWidth: 400 }}>
           <input
             placeholder="Goal name (e.g. Emergency Fund)"
@@ -83,7 +83,7 @@ export default function Goals() {
             min="0"
           />
           {formError && <p className="error">{formError}</p>}
-          <button type="submit" disabled={submitting} style={{ padding: '0.6rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
+          <button type="submit" disabled={submitting} className="btn-primary" style={{ padding: '0.6rem' }}>
             {submitting ? 'Saving…' : 'Add Goal'}
           </button>
         </form>
@@ -105,14 +105,14 @@ export default function Goals() {
                 <li key={goal.id} className="insight-card" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <strong>{goal.name}</strong>
-                    <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                       ${current.toLocaleString()} / ${Number(goal.target).toLocaleString()}
                     </span>
                   </div>
-                  <div style={{ margin: '0.5rem 0', background: '#e2e8f0', borderRadius: 999, height: 8, overflow: 'hidden' }}>
-                    <div style={{ width: `${pct}%`, height: '100%', background: pct >= 100 ? '#16a34a' : '#3b82f6', transition: 'width 0.3s' }} />
+                  <div style={{ margin: '0.5rem 0', background: 'var(--navy-100)', borderRadius: 999, height: 7, overflow: 'hidden' }}>
+                    <div style={{ width: `${pct}%`, height: '100%', background: pct >= 100 ? 'var(--gain)' : 'var(--navy-600)', transition: 'width 0.3s' }} />
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#64748b' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                     <span>{pct}% complete</span>
                     {pace && <span>{pace}</span>}
                   </div>

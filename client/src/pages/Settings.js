@@ -104,11 +104,11 @@ export default function Settings() {
             <table className="tx-table">
               <tbody>
                 <tr>
-                  <td style={{ color: '#64748b', width: 120 }}>Email</td>
+                  <td style={{ color: 'var(--text-muted)', width: 120 }}>Email</td>
                   <td>{profile.email}</td>
                 </tr>
                 <tr>
-                  <td style={{ color: '#64748b' }}>Member since</td>
+                  <td style={{ color: 'var(--text-muted)' }}>Member since</td>
                   <td>{String(profile.createdAt).slice(0, 10)}</td>
                 </tr>
               </tbody>
@@ -135,7 +135,7 @@ export default function Settings() {
                 <button
                   type="submit"
                   disabled={creating}
-                  style={{ padding: '0.5rem 1rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
+                  style={{ padding: '0.5rem 1rem', background: 'var(--navy-800)', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
                 >
                   {creating ? 'Creating…' : 'Create'}
                 </button>
@@ -160,13 +160,10 @@ export default function Settings() {
                   {(household.members || []).map(m => (
                     <tr key={m.user_id}>
                       <td>{m.email}</td>
-                      <td style={{ color: m.role === 'owner' ? '#3b82f6' : '#64748b', textTransform: 'capitalize' }}>{m.role}</td>
+                      <td style={{ color: m.role === 'owner' ? 'var(--navy-400)' : 'var(--text-muted)', textTransform: 'capitalize' }}>{m.role}</td>
                       <td>
                         {isOwner && m.user_id !== profile?.id && (
-                          <button
-                            onClick={() => handleRemoveMember(m.user_id)}
-                            style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', background: '#e05c5c', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}
-                          >
+                          <button onClick={() => handleRemoveMember(m.user_id)} className="btn-danger">
                             Remove
                           </button>
                         )}
@@ -178,7 +175,7 @@ export default function Settings() {
 
               {isOwner && (
                 <div>
-                  <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>Invite a partner by email:</p>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Invite a partner by email:</p>
                   <form onSubmit={handleInvite} style={{ display: 'flex', gap: '0.5rem', maxWidth: 360 }}>
                     <input
                       type="email"
@@ -190,19 +187,16 @@ export default function Settings() {
                     <button
                       type="submit"
                       disabled={inviting}
-                      style={{ padding: '0.5rem 1rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
+                      style={{ padding: '0.5rem 1rem', background: 'var(--navy-800)', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
                     >
                       {inviting ? 'Inviting…' : 'Invite'}
                     </button>
                   </form>
-                  {inviteMsg && <p style={{ color: '#16a34a', marginTop: '0.4rem', fontSize: '0.85rem' }}>{inviteMsg}</p>}
+                  {inviteMsg && <p style={{ color: 'var(--gain)', marginTop: '0.4rem', fontSize: '0.85rem' }}>{inviteMsg}</p>}
                   {inviteError && <p className="error" style={{ marginTop: '0.4rem' }}>{inviteError}</p>}
                 </div>
               )}
-              <button
-                onClick={handleLeave}
-                style={{ marginTop: '1rem', fontSize: '0.8rem', padding: '0.3rem 0.8rem', background: 'transparent', color: '#94a3b8', border: '1px solid #475569', borderRadius: 6, cursor: 'pointer' }}
-              >
+              <button onClick={handleLeave} className="btn-leave">
                 Leave household
               </button>
             </div>
@@ -240,7 +234,7 @@ export default function Settings() {
           <h3 className="dash-section-title">Session</h3>
           <button
             onClick={logout}
-            style={{ padding: '0.6rem 1.4rem', background: '#e05c5c', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}
+            style={{ padding: '0.6rem 1.4rem', background: 'var(--loss)', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem', fontFamily: 'var(--font-body)' }}
           >
             Sign out
           </button>

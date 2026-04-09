@@ -28,30 +28,32 @@ export default function Register() {
 
   return (
     <div className="auth-page">
-      <h1>Agence</h1>
-      <h2>Create account</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password (min 8 characters)"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          minLength={8}
-          required
-        />
-        {error && <p className="error">{error}</p>}
-        <button type="submit" disabled={loading}>
-          {loading ? 'Creating account…' : 'Create account'}
-        </button>
-      </form>
-      <p>Already have an account? <Link to="/login">Sign in</Link></p>
+      <div className="auth-card">
+        <h1>Agence</h1>
+        <h2>Create account</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password (min 8 characters)"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            minLength={8}
+            required
+          />
+          {error && <p className="error">{error}</p>}
+          <button type="submit" disabled={loading}>
+            {loading ? 'Creating account…' : 'Create account'}
+          </button>
+        </form>
+        <p>Already have an account? <Link to="/login">Sign in</Link></p>
+      </div>
     </div>
   );
 }

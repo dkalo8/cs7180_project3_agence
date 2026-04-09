@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import api from '../api/client';
 import AppNav from '../components/AppNav';
 
-const SEVERITY_COLOR = { high: '#e53e3e', medium: '#dd6b20', info: '#3182ce', low: '#38a169' };
-
 export default function Insights() {
   const [insights, setInsights] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,10 +26,7 @@ export default function Insights() {
         <ul className="insight-list">
           {insights.map((insight, i) => (
             <li key={i} className="insight-card">
-              <span
-                className="severity-badge"
-                style={{ background: SEVERITY_COLOR[insight.severity] || '#718096' }}
-              >
+              <span className={`severity-badge severity-badge--${insight.severity || 'info'}`}>
                 {insight.severity || 'info'}
               </span>
               <p>{insight.message}</p>
