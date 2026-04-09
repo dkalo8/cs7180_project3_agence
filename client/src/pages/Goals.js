@@ -61,6 +61,7 @@ export default function Goals() {
     <div className="page">
       <AppNav />
       <main>
+        <div className="page-header"><h2>Goals</h2></div>
         <h3 className="section-heading">Add a Goal</h3>
         <form onSubmit={handleSubmit} style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '0.6rem', maxWidth: 400 }}>
           <input

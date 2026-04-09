@@ -129,6 +129,7 @@
 - [x] **Goal progress on dashboard** — top active goal with progress bar in right rail
 - [ ] **Drag-and-drop goal ordering** — let user set goal priority via drag-and-drop on Goals page
 - [ ] **Dashboard balance wiring** — after buying stock, dashboard should reflect updated equity, positions, and sparkline; verify re-fetch after trade
+- [ ] **Dashboard percent-change zeros** — 24h change shows 0% across the board; likely because only brokerage equity is tracked, not the cash account; investigate Alpaca `/account` cash field + combine cash + equity into displayed total
 - [ ] **Responsive CSS** — deferred until after 9B aesthetic redesign (redesign will redo CSS in one pass)
 - [ ] **Account selection** — if user has multiple Plaid or trading accounts, allow switching active account on dashboard
 - [ ] **Investor risk profile** — settings field for risk tolerance (conservative/moderate/aggressive); feed into autopilot agent rules
@@ -146,15 +147,17 @@
 - [x] **Frontend** — Account page: create form, member list, Remove button (owner), Leave button, invite form; Dashboard shows "Household: [name]" badge
 - [x] **Shared data** — goals/watchlist/transactions queries use `= ANY(uuid[])` to aggregate all household member data; `getHouseholdMemberIds` called in each route
 
-### 9B: Aesthetic Redesign
+### 9B: Aesthetic Redesign ✅ (core done, polish pending)
 > Overhaul visual design from AI-generated HTML-y look to polished product UI.
 > Do AFTER household accounts — covers everything in one CSS pass.
 
-- [ ] **Design system** — CSS variables for earthy dark palette (deep greens, warm near-black, amber accent), Google Fonts pairing (display serif + geometric sans), spacing/radius scale
-- [ ] **Global styles** — apply new tokens to nav, cards, buttons, inputs, badges, tables across all pages
-- [ ] **Page-by-page pass** — Dashboard, Insights, Expenses, Watchlist, Portfolio, Goals, Login/Register, ChatWidget
-- [ ] **Motion** — subtle CSS transitions on cards, FAB hover, page reveals
-- [ ] Reference: `aesthetic-redesign.md` for full design mandate
+- [x] **Design system** — CSS variables (navy palette), Google Fonts (Cormorant Garamond + Outfit), spacing/radius/shadow scale
+- [x] **Global styles** — tokens applied to nav, cards, buttons, inputs, badges, tables across all pages
+- [x] **Page-by-page pass** — Dashboard, Insights, Expenses, Watchlist, Portfolio, Goals, Login/Register, ChatWidget
+- [x] **Motion** — fadeUp page-load animation, card hover lift, FAB hover scale
+- [x] **Page title consistency** — Portfolio + Goals now use `.page-header h2`; all pages consistent (Cormorant Garamond, 2rem, weight 400)
+- [x] **Insights page title** — added `.page-header` with "Insights" h2
+- [x] **Insight cards clickable** — `SOURCE_ROUTE` map (`spending/anomaly→/expenses`, `goals→/goals`, `portfolio/autopilot→/portfolio`, `market/watchlist→/watchlist`); cards with known source show "View →" link
 
 ### 9C: Google Auth
 > Add Google OAuth sign-in alongside existing email/password.
@@ -170,6 +173,7 @@
 ## Phase 10: Documentation & Demo (do last)
 
 - [x] Add Mermaid architecture diagram to README.md
+- [ ] **Add Plaid sandbox instructions to README.md** — graders need: how to link an account, sandbox credentials (username/password), and what to expect after linking
 - [ ] Write + publish blog post (Medium or dev.to) — 1,500+ words
 - [ ] Record 5–10 min screencast
 - [ ] Write 500-word individual reflection

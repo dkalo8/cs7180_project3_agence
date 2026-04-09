@@ -95,7 +95,7 @@ export default function Portfolio() {
     <div className="page">
       <AppNav />
       <main>
-        <h2 style={{ margin: '0 0 1.5rem', fontSize: '1.4rem', fontWeight: 700, color: '#0f172a' }}>Portfolio</h2>
+        <div className="page-header"><h2>Portfolio</h2></div>
 
         {loading && <p>Loading portfolio…</p>}
         {error && <p className="error">{error}</p>}
