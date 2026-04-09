@@ -18,8 +18,9 @@ Return ONLY valid JSON in this exact format:
 {
   "insights": [
     {
-      "source": "<agent name>",
+      "source": "<agent name: spending|anomaly|goals|portfolio|market|autopilot|watchlist>",
       "message": "<insight message>",
+      "severity": "<high|medium|low|info based on urgency+actionability>",
       "actionability": <1-5>,
       "urgency": <1-5>,
       "crossDomainRelevance": <1-5>,

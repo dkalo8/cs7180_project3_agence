@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/client';
 import AppNav from '../components/AppNav';
 
@@ -14,6 +14,7 @@ const SOURCE_ROUTE = {
 };
 
 export default function Insights() {
+  const navigate = useNavigate();
   const [insights, setInsights] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -39,22 +40,19 @@ export default function Insights() {
           {insights.map((insight, i) => {
             const route = SOURCE_ROUTE[insight.source] || null;
             return (
-              <li key={i} className="insight-card">
+              <li
+                key={i}
+                className="insight-card"
+                onClick={route ? () => navigate(route) : undefined}
+                style={route ? { cursor: 'pointer' } : undefined}
+              >
                 <span className={`severity-badge severity-badge--${insight.severity || 'info'}`}>
                   {insight.severity || 'info'}
                 </span>
                 <div style={{ flex: 1 }}>
-                  {route
-                    ? <Link to={route} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
-                        <p style={{ margin: 0 }}>{insight.message}</p>
-                        {insight.score !== undefined && <small>Score: {(insight.score * 100).toFixed(0)}</small>}
-                        <small style={{ color: 'var(--navy-400)', marginTop: '0.2rem', display: 'block' }}>View →</small>
-                      </Link>
-                    : <>
-                        <p style={{ margin: 0 }}>{insight.message}</p>
-                        {insight.score !== undefined && <small>Score: {(insight.score * 100).toFixed(0)}</small>}
-                      </>
-                  }
+                  <p style={{ margin: 0 }}>{insight.message}</p>
+                  {insight.score !== undefined && <small>Score: {insight.score}</small>}
+                  {route && <small style={{ color: 'var(--navy-400)', marginTop: '0.2rem', display: 'block' }}>View →</small>}
                 </div>
               </li>
             );
