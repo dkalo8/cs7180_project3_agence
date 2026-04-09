@@ -137,10 +137,11 @@ _Last updated: 2026-04-06_
 - 9D AI Chat ✅ — POST /api/v1/chat (Claude Sonnet 4.6, financial context injected), floating ChatWidget (bottom-right FAB), react-markdown + remark-gfm for table rendering. 173 tests.
 - CI fixed ✅ — coveragePathIgnorePatterns excludes services/; E2E test updated for rewritten dashboard.
 - Local dev CORS unresolved — UI verified on Vercel only.
-- Next: 9E Polish (trade history tab, empty states, Settings page, goal on dashboard, responsive CSS)
+- Next: 8G Polish pass (trade history tab, order types, empty states, Settings page, goal on dashboard, responsive CSS)
 
 **Session 2026-04-09:**
 - Trade "unauthorized" bug fixed ✅ — root cause: Render env var `ALPACA_API_KEY` vs code reading `ALPACA_KEY_ID`. Added fallback in `server/services/alpaca.js`: `ALPACA_KEY_ID || ALPACA_API_KEY`. Portfolio route `.catch()` fallbacks had been masking the auth failure on GET endpoints.
+- 8F Watchlist real-time prices ✅ — `getSnapshots` was returning array; fixed to return object keyed by symbol. Watchlist + insights now get actual price data. 176/176 tests.
 - AI chat full context ✅ — watchlist + trade history added to Promise.all in chat.js; system prompt updated with WATCHLIST + RECENT TRADES sections + narrow-popup formatting instruction.
 - Chat table rendering ✅ — popup widened 360→440px; `min-width: 60px; word-break: normal` on `.chat-md` table cells.
 - 173/173 tests passing. Next: 8F Watchlist real-time prices → 8G Polish pass.

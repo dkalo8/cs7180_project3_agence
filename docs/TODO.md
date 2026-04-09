@@ -119,11 +119,9 @@
 - [ ] **Dashboard balance wiring** — after buying stock via Portfolio, dashboard should reflect updated equity, positions, and sparkline history; verify `GET /api/v1/portfolio` + `GET /api/v1/portfolio/history` re-fetch correctly after trade
 - [x] **AI chat full context** — chat route now loads watchlist + trade history alongside transactions/accounts/goals/positions; system prompt gives Claude complete visibility into all user data
 
-### 8F: Watchlist Real-Time Prices
-> Enrich watchlist with live Alpaca data
-
-- [ ] **Backend** — `GET /api/v1/watchlist` response already has tickers; extend to include Alpaca snapshot price + 24h % change per ticker (reuse snapshot logic from `insights.js`)
-- [ ] **Frontend** — `Watchlist.js` table: show current price + 24h change column (green/red) next to each ticker; update on page load
+### 8F: Watchlist Real-Time Prices ✅
+- [x] **Backend** — `GET /api/v1/watchlist` enriched with Alpaca snapshot price + 24h % change; `alpacaService.getSnapshots` fixed to return object keyed by symbol (was returning array, causing null prices in both watchlist and insights)
+- [x] **Frontend** — `Watchlist.js` table: Price + 24h Change columns with green/red coloring
 
 ### 8G: Polish Pass
 > Small improvements with high UX impact
