@@ -31,7 +31,11 @@ router.post('/', authMiddleware, async (req, res, next) => {
       err.body?.message ||
       null;
     if (alpacaMsg) {
-      return res.status(422).json({ error: alpacaMsg });
+      const isAuth = /unauthorized|forbidden/i.test(alpacaMsg);
+      const hint = isAuth
+        ? ' — ensure ALPACA_KEY_ID and ALPACA_SECRET_KEY on Render are paper trading keys (from paper.alpaca.markets, not live keys)'
+        : '';
+      return res.status(422).json({ error: alpacaMsg + hint });
     }
     next(err);
   }

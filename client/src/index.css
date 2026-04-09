@@ -784,7 +784,7 @@ a:hover { text-decoration: underline; }
 .chat-fab:hover { background: #2563eb; transform: scale(1.06); }
 
 .chat-popup {
-  width: 360px;
+  width: 440px;
   max-width: calc(100vw - 3rem);
   background: #fff;
   border-radius: 16px;
@@ -897,8 +897,8 @@ a:hover { text-decoration: underline; }
 .chat-md li { margin-bottom: 0.2rem; }
 .chat-md blockquote { margin: 0.4rem 0; padding: 0.3rem 0.75rem; border-left: 3px solid #cbd5e1; color: #64748b; }
 .chat-md table { border-collapse: collapse; width: 100%; font-size: 0.8rem; margin: 0.4rem 0; }
-.chat-md th, .chat-md td { padding: 0.25rem 0.5rem; border: 1px solid #e2e8f0; text-align: left; word-break: break-word; }
-.chat-md td:last-child, .chat-md th:last-child { white-space: nowrap; word-break: normal; }
+.chat-md th, .chat-md td { padding: 0.25rem 0.5rem; border: 1px solid #e2e8f0; text-align: left; min-width: 60px; word-break: normal; }
+.chat-md td:last-child, .chat-md th:last-child { white-space: normal; }
 .chat-md th { background: #f1f5f9; font-weight: 600; }
 .chat-bubble--user .chat-md th { background: rgba(255,255,255,.2); }
 .chat-bubble--user .chat-md th,

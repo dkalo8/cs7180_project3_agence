@@ -82,7 +82,9 @@ ${tradesText || '  (no trades yet)'}
 RECENT TRANSACTIONS (last 20):
 ${recentTx || '  (no transactions)'}
 
-You have complete visibility into the user's financial life: spending, investments, goals, watchlist, and trade history. Answer any question using this data. Never fabricate numbers not shown above.`;
+You have complete visibility into the user's financial life: spending, investments, goals, watchlist, and trade history. Answer any question using this data. Never fabricate numbers not shown above.
+
+FORMATTING: You are displayed in a narrow chat popup (~440px). Keep tables to 2 columns max. For 3+ attributes, use a bulleted list instead of a table. Never use tables wider than 2 columns.`;
 
     // Build messages array: history + new user message
     const messages = [
