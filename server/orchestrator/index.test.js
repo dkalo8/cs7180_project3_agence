@@ -184,7 +184,7 @@ describe('runOrchestrator — cycle 5: insight passthrough', () => {
 
     const result = await runOrchestrator(mockUserData, mockMarketData);
 
-    expect(result.spending).toContainEqual(spendingInsight);
-    expect(result.market).toContainEqual(marketInsight);
+    expect(result.spending).toContainEqual(expect.objectContaining(spendingInsight));
+    expect(result.market).toContainEqual(expect.objectContaining(marketInsight));
   });
 });

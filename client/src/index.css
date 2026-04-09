@@ -626,10 +626,11 @@ input, button, textarea, select {
   flex-shrink: 0;
   margin-top: 2px;
 }
-.severity-badge--high   { background: rgba(197, 48, 48, 0.09);  color: #b91c1c; }
-.severity-badge--medium { background: rgba(180, 83, 9, 0.09);   color: #b45309; }
-.severity-badge--info   { background: rgba(74, 111, 165, 0.12); color: var(--navy-600); }
-.severity-badge--low    { background: rgba(26, 158, 92, 0.10);  color: #15803d; }
+.severity-badge--high    { background: rgba(197, 48, 48, 0.09);  color: #b91c1c; }
+.severity-badge--medium  { background: rgba(180, 83, 9, 0.09);   color: #b45309; }
+.severity-badge--warning { background: rgba(180, 83, 9, 0.09);   color: #b45309; }
+.severity-badge--info    { background: rgba(74, 111, 165, 0.12); color: var(--navy-600); }
+.severity-badge--low     { background: rgba(26, 158, 92, 0.10);  color: #15803d; }
 
 /* ============================================================
    Portfolio

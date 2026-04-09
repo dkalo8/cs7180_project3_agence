@@ -36,7 +36,16 @@ async function runOrchestrator(userData, marketData) {
     safeRun(watchlistAgent, userData, marketData),
   ]);
 
-  return { spending, anomaly, goals, portfolio, market, autopilot, watchlist };
+  const tag = (arr, src) => arr.map(i => ({ ...i, source: src }));
+  return {
+    spending:  tag(spending,  'spending'),
+    anomaly:   tag(anomaly,   'anomaly'),
+    goals:     tag(goals,     'goals'),
+    portfolio: tag(portfolio, 'portfolio'),
+    market:    tag(market,    'market'),
+    autopilot: tag(autopilot, 'autopilot'),
+    watchlist: tag(watchlist, 'watchlist'),
+  };
 }
 
 module.exports = { runOrchestrator };
