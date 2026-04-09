@@ -1,6 +1,6 @@
 # Agence — P3 TODO Checklist
 
-**Deadline:** April 21, 2026 | **Points:** 200 | **Current estimate:** ~173/173 tests, ~85% complete
+**Deadline:** April 21, 2026 | **Points:** 200 | **Current estimate:** ~181/181 tests, ~88% complete
 
 > Ordered by dependency and rubric impact. Work top-to-bottom.
 
@@ -30,10 +30,10 @@
 - [x] Implement `server/middleware/auth.js` — JWT verify middleware
 - [x] Implement `server/middleware/errors.js` — centralized error handler
 - [x] Implement `server/index.js` — Express app, middleware mount, route registration
-- [x] Implement `server/routes/auth.js` — POST /api/v1/auth/register, /login
+- [x] Implement `server/routes/auth.js` — POST /api/v1/auth/register, /login, GET /api/v1/auth/me
 - [x] Implement `server/routes/accounts.js` — Plaid Link token + account sync
 - [x] Implement `server/routes/portfolio.js` — Alpaca positions, P&L
-- [x] Implement `server/routes/trades.js` — paper trade execution
+- [x] Implement `server/routes/trades.js` — paper trade execution (market/limit/stop/stop_limit order types)
 - [x] Implement `server/routes/insights.js` — GET /api/v1/insights (calls orchestrator → judge)
 - [x] Integration tests in `server/tests/integration/` — 11 tests (auth round-trip + insights pipeline)
 
@@ -45,7 +45,7 @@
 - [x] Auth flow: login + register pages, JWT storage
 - [x] Plaid Link component: connect bank account
 - [x] Insights feed: display ranked insights from judge
-- [x] Portfolio view: Alpaca positions + P&L
+- [x] Portfolio view: Alpaca positions + P&L + trade history tab
 - [x] Goals tracker: create + track savings goals
 - [x] CSS / styling — dark nav, card layout, severity badges (PR #6, deployed to Vercel)
 
@@ -76,7 +76,7 @@
 
 - [x] Configure Playwright for E2E — 4/4 tests passing against live Vercel URL
 - [x] Enable Jest coverage reporting — 70% threshold enforced in CI, ~89% actual
-- [x] Add at least 3 integration tests (auth flow, insights endpoint) — 11 tests, 173/173 total
+- [x] Add at least 3 integration tests (auth flow, insights endpoint) — 11 tests, 181/181 total
 
 ---
 
@@ -108,56 +108,67 @@
 - [x] `Watchlist.js` page: add/remove tickers
 
 ### 8D: AI Chat Assistant ✅
-- [x] `POST /api/v1/chat` — Claude Sonnet 4.6 with financial context injected
+- [x] `POST /api/v1/chat` — Claude Sonnet 4.6 with full financial context (accounts, transactions, positions, watchlist, trades, goals)
 - [x] `ChatWidget.js`: floating bottom-right FAB, markdown rendering (react-markdown + remark-gfm)
 
-### 8E: Bug Fixes (do first — unblock other features)
-> Bugs found during testing — fix before adding more features
-
-- [x] **Portfolio trade error (431)** — fixed: trades route now surfaces Alpaca error message instead of forwarding upstream status codes; error handler no longer bleeds 3rd-party 4xx to client
-- [x] **Trade "unauthorized"** — root cause: Render env var named `ALPACA_API_KEY` but code read `ALPACA_KEY_ID`. Fixed: `alpaca.js` now falls back `ALPACA_KEY_ID || ALPACA_API_KEY`. Portfolio route `.catch()` fallbacks masked the auth failure on GET.
-- [ ] **Dashboard balance wiring** — after buying stock via Portfolio, dashboard should reflect updated equity, positions, and sparkline history; verify `GET /api/v1/portfolio` + `GET /api/v1/portfolio/history` re-fetch correctly after trade
-- [x] **AI chat full context** — chat route now loads watchlist + trade history alongside transactions/accounts/goals/positions; system prompt gives Claude complete visibility into all user data
+### 8E: Bug Fixes ✅
+- [x] **Portfolio trade error (431)** — trades route surfaces Alpaca error message; error handler no longer bleeds 3rd-party 4xx
+- [x] **Trade "unauthorized"** — `alpaca.js` fallback `ALPACA_KEY_ID || ALPACA_API_KEY`; portfolio `.catch()` fallbacks were masking the auth failure
+- [x] **AI chat full context** — watchlist + trade history alongside transactions/accounts/goals/positions
+- [x] **Account balance display** — `getAccountsByUserId` now LEFT JOINs `balances` so Settings/Account page shows real Plaid balances
 
 ### 8F: Watchlist Real-Time Prices ✅
-- [x] **Backend** — `GET /api/v1/watchlist` enriched with Alpaca snapshot price + 24h % change; `alpacaService.getSnapshots` fixed to return object keyed by symbol (was returning array, causing null prices in both watchlist and insights)
+- [x] **Backend** — `GET /api/v1/watchlist` enriched with Alpaca snapshot price + 24h % change; `alpacaService.getSnapshots` fixed to return object keyed by symbol
 - [x] **Frontend** — `Watchlist.js` table: Price + 24h Change columns with green/red coloring
 
-### 8G: Polish Pass
-> Small improvements with high UX impact
-
+### 8G: Polish Pass ✅ (partial)
 - [x] **Trade history** — Positions / Trade History tab toggle in `Portfolio.js`
 - [x] **Order types** — market/limit/stop/stop_limit selector; conditional limit_price + stop_price fields
-- [x] **Empty states** — all pages already had empty states; verified and kept
+- [x] **Empty states** — all pages verified
 - [x] **Account/Settings page** — `/settings` route: profile email (via `GET /api/v1/auth/me`), linked accounts, sign-out
-- [x] **Goal progress on dashboard** — top active goal with progress bar in right rail; "Create first goal →" when none exist
-- [ ] **Responsive CSS** — deferred until after 8H aesthetic redesign (redesign will redo CSS in one pass)
-- [ ] **Account selection** — if user has multiple Plaid or trading accounts (regular, IRA, 401k, etc.), allow switching active account on dashboard
+- [x] **Goal progress on dashboard** — top active goal with progress bar in right rail
+- [ ] **Drag-and-drop goal ordering** — let user set goal priority via drag-and-drop on Goals page
+- [ ] **Dashboard balance wiring** — after buying stock, dashboard should reflect updated equity, positions, and sparkline; verify re-fetch after trade
+- [ ] **Responsive CSS** — deferred until after 9B aesthetic redesign (redesign will redo CSS in one pass)
+- [ ] **Account selection** — if user has multiple Plaid or trading accounts, allow switching active account on dashboard
 - [ ] **Investor risk profile** — settings field for risk tolerance (conservative/moderate/aggressive); feed into autopilot agent rules
-- [ ] **Goal types** — add `goal_type` column to goals table (savings/growth/speculation); display type badge and tailor pace/progress logic per type
+- [ ] **Goal types** — add `goal_type` column to goals table (savings/growth/speculation); display type badge, tailor pace/progress logic per type
 
-### 8H: Aesthetic Redesign
+---
+
+## Phase 9: Priority Features (do in order)
+
+### 9A: Household Accounts ⚠️ HIGH PRIORITY (in original proposal — rubric risk if missing)
+> "As a household user, I want to invite my partner to a shared dashboard so we can see our combined finances together."
+
+- [ ] **DB migration** — `households (id, name, created_at)` + `household_members (id, household_id, user_id, role: owner/member, created_at)` added to `migrate.js`
+- [ ] **Backend routes** — `POST /api/v1/household` (create), `POST /api/v1/household/invite` (invite by email), `GET /api/v1/household` (current household + members)
+- [ ] **Shared data** — when user is in a household, insights/goals/watchlist aggregate across all member user IDs
+- [ ] **Frontend** — Account page: show household name + members, invite form (enter partner email); Dashboard shows "Household View" when in a household
+- [ ] **Tests** — unit tests for household routes; integration test for invite flow
+
+### 9B: Aesthetic Redesign
 > Overhaul visual design from AI-generated HTML-y look to polished product UI.
-> Do this AFTER all features/fixes are complete — covers everything in one pass.
+> Do AFTER household accounts — covers everything in one CSS pass.
 
 - [ ] **Design system** — CSS variables for earthy dark palette (deep greens, warm near-black, amber accent), Google Fonts pairing (display serif + geometric sans), spacing/radius scale
 - [ ] **Global styles** — apply new tokens to nav, cards, buttons, inputs, badges, tables across all pages
 - [ ] **Page-by-page pass** — Dashboard, Insights, Expenses, Watchlist, Portfolio, Goals, Login/Register, ChatWidget
-- [ ] **Motion** — add subtle CSS transitions on cards, FAB hover, page reveals
+- [ ] **Motion** — subtle CSS transitions on cards, FAB hover, page reveals
 - [ ] Reference: `aesthetic-redesign.md` for full design mandate
 
-### 8I: Google Auth
+### 9C: Google Auth
 > Add Google OAuth sign-in alongside existing email/password.
 > Do AFTER aesthetic redesign so login page gets new styles applied once.
 
 - [ ] **Backend** — add Google OAuth strategy (Passport.js or direct token verify); new route `POST /api/v1/auth/google`; exchange Google ID token → issue JWT
 - [ ] **Frontend** — add "Sign in with Google" button to Login + Register pages; use `@react-oauth/google` or similar
 - [ ] **DB** — `users` table: add `google_id` column (nullable) via migration
-- [ ] **Test** — mock Google token verify in unit test; integration test verifies JWT returned
+- [ ] **Tests** — mock Google token verify in unit test; integration test verifies JWT returned
 
 ---
 
-## Phase 9: Documentation & Demo (do last)
+## Phase 10: Documentation & Demo (do last)
 
 - [x] Add Mermaid architecture diagram to README.md
 - [ ] Write + publish blog post (Medium or dev.to) — 1,500+ words
@@ -171,10 +182,10 @@
 
 | Category | Max | Est. Now | Achievable |
 |---|---|---|---|
-| Application Quality | 40 | 30 | 38 (bug fixes + watchlist prices + polish + redesign) |
+| Application Quality | 40 | 32 | 38 (household accounts + redesign) |
 | Claude Code Mastery | 55 | 47 | 50 (2 skills, hooks, .mcp.json, agent, 7/6 agents) |
-| Testing & TDD | 30 | 28 | 28 (173 unit/integration + E2E + 89% coverage) |
+| Testing & TDD | 30 | 28 | 28 (181 unit/integration + E2E + 89% coverage) |
 | CI/CD & Production | 35 | 30 | 32 (Actions + Vercel + Render + secrets) |
 | Team Process | 25 | 18 | 20 (Issues, PR, sprints, AI disclosure) |
 | Documentation & Demo | 15 | 5 | 13 (diagram done; blog + video pending) |
-| **Total** | **200** | **~158** | **~181** |
+| **Total** | **200** | **~160** | **~181** |

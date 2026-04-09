@@ -51,7 +51,11 @@ async function createAccount(userId, accessToken, itemId, institutionName) {
 
 async function getAccountsByUserId(userId) {
   const { rows } = await pool.query(
-    'SELECT id, user_id, plaid_item_id, institution_name, created_at FROM accounts WHERE user_id = $1',
+    `SELECT a.id, a.user_id, a.plaid_item_id, a.institution_name, a.created_at,
+            b.current AS balance, b.available
+     FROM accounts a
+     LEFT JOIN balances b ON b.account_id = a.id
+     WHERE a.user_id = $1`,
     [userId]
   );
   return rows;

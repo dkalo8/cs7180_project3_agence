@@ -96,7 +96,7 @@ describe('getAccountsByUserId', () => {
     const result = await queries.getAccountsByUserId('uuid-1');
 
     const [sql, params] = mockQuery.mock.calls[0];
-    expect(sql).toMatch(/SELECT.*FROM accounts/i);
+    expect(sql).toMatch(/SELECT[\s\S]*FROM accounts/i);
     expect(params).toContain('uuid-1');
     expect(result).toEqual(fakeAccounts);
   });
