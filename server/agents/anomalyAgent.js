@@ -31,14 +31,14 @@ function anomalyAgent(userData) {
     }
   }
 
-  // Flag duplicate charges: same merchant + same amount + same date
+  // Flag duplicate charges: same amount + same date (merchant excluded — often null)
   const seen = new Map();
   for (const tx of transactions) {
     const name = tx.merchant_name || tx.merchant || 'unknown merchant';
-    const key = `${name}|${tx.amount}|${tx.date}`;
+    const key = `${tx.amount}|${tx.date}`;
     if (seen.has(key)) {
       const already = insights.some(
-        i => i.type === 'duplicate_charge' && i.merchant === name && i.amount === tx.amount
+        i => i.type === 'duplicate_charge' && i.amount === tx.amount
       );
       if (!already) {
         insights.push({
