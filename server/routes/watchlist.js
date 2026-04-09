@@ -8,7 +8,8 @@ const alpacaService = require('../services/alpaca');
 // GET /api/v1/watchlist
 router.get('/', authMiddleware, async (req, res, next) => {
   try {
-    const watchlist = await queries.getWatchlistByUserId(req.userId);
+    const userIds = await queries.getHouseholdMemberIds(req.userId);
+    const watchlist = await queries.getWatchlistByUserId(userIds);
 
     if (watchlist.length === 0) {
       return res.status(200).json({ watchlist });

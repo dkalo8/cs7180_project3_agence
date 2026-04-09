@@ -76,10 +76,11 @@ async function upsertTransactions(transactions) {
   }
 }
 
-async function getTransactionsByUserId(userId) {
+async function getTransactionsByUserId(userIds) {
+  const ids = Array.isArray(userIds) ? userIds : [userIds];
   const { rows } = await pool.query(
-    'SELECT id, account_id, amount, merchant_name, category, date FROM transactions WHERE user_id = $1 ORDER BY date DESC',
-    [userId]
+    'SELECT id, account_id, amount, merchant_name, category, date FROM transactions WHERE user_id = ANY($1::uuid[]) ORDER BY date DESC',
+    [ids]
   );
   return rows;
 }
@@ -113,10 +114,11 @@ async function createGoal(userId, name, target, monthlyContribution) {
   return rows[0];
 }
 
-async function getGoalsByUserId(userId) {
+async function getGoalsByUserId(userIds) {
+  const ids = Array.isArray(userIds) ? userIds : [userIds];
   const { rows } = await pool.query(
-    'SELECT * FROM goals WHERE user_id = $1 ORDER BY created_at ASC',
-    [userId]
+    'SELECT * FROM goals WHERE user_id = ANY($1::uuid[]) ORDER BY created_at ASC',
+    [ids]
   );
   return rows;
 }
@@ -165,12 +167,15 @@ async function addToWatchlist(userId, ticker) {
   return rows[0] ?? null;
 }
 
-async function getWatchlistByUserId(userId) {
+async function getWatchlistByUserId(userIds) {
+  const ids = Array.isArray(userIds) ? userIds : [userIds];
   const { rows } = await pool.query(
-    'SELECT id, ticker, added_at FROM watchlist WHERE user_id = $1 ORDER BY added_at DESC',
-    [userId]
+    'SELECT id, user_id, ticker, added_at FROM watchlist WHERE user_id = ANY($1::uuid[]) ORDER BY added_at DESC',
+    [ids]
   );
-  return rows;
+  // Deduplicate by ticker when multiple household members track the same ticker
+  const seen = new Set();
+  return rows.filter(r => { if (seen.has(r.ticker)) return false; seen.add(r.ticker); return true; });
 }
 
 async function removeFromWatchlist(userId, ticker) {
@@ -183,6 +188,24 @@ async function removeFromWatchlist(userId, ticker) {
 // ---------------------------------------------------------------------------
 // Households
 // ---------------------------------------------------------------------------
+
+async function getHouseholdMemberIds(userId) {
+  const { rows } = await pool.query(
+    `SELECT hm2.user_id
+     FROM household_members hm1
+     JOIN household_members hm2 ON hm2.household_id = hm1.household_id
+     WHERE hm1.user_id = $1`,
+    [userId]
+  );
+  return rows.length > 0 ? rows.map(r => r.user_id) : [userId];
+}
+
+async function removeHouseholdMember(householdId, targetUserId) {
+  await pool.query(
+    'DELETE FROM household_members WHERE household_id = $1 AND user_id = $2',
+    [householdId, targetUserId]
+  );
+}
 
 async function createHousehold(name) {
   const { rows } = await pool.query(
@@ -243,4 +266,6 @@ module.exports = {
   createHousehold,
   addHouseholdMember,
   getHouseholdByUserId,
+  getHouseholdMemberIds,
+  removeHouseholdMember,
 };

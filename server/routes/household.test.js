@@ -12,7 +12,10 @@ const queries = require('../db/queries');
 
 const validToken = jwt.sign({ userId: 'uuid-1' }, 'test-secret');
 
-beforeEach(() => jest.clearAllMocks());
+beforeEach(() => {
+  jest.clearAllMocks();
+  queries.getHouseholdMemberIds.mockResolvedValue(['uuid-1']);
+});
 
 // ---------------------------------------------------------------------------
 // POST /api/v1/household — create
@@ -156,5 +159,84 @@ describe('GET /api/v1/household', () => {
     expect(res.status).toBe(200);
     expect(res.body.household).toHaveProperty('name', 'Our Home');
     expect(res.body.household.members).toHaveLength(2);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// DELETE /api/v1/household/leave
+// ---------------------------------------------------------------------------
+describe('DELETE /api/v1/household/leave', () => {
+  test('returns 401 without token', async () => {
+    const res = await request(app).delete('/api/v1/household/leave');
+    expect(res.status).toBe(401);
+  });
+
+  test('returns 404 when user not in household', async () => {
+    queries.getHouseholdByUserId.mockResolvedValue(null);
+    const res = await request(app)
+      .delete('/api/v1/household/leave')
+      .set('Authorization', `Bearer ${validToken}`);
+    expect(res.status).toBe(404);
+  });
+
+  test('returns 200 and removes member on success', async () => {
+    queries.getHouseholdByUserId.mockResolvedValue({ id: 'hh-1', name: 'Our Home', members: [] });
+    queries.removeHouseholdMember.mockResolvedValue();
+    const res = await request(app)
+      .delete('/api/v1/household/leave')
+      .set('Authorization', `Bearer ${validToken}`);
+    expect(res.status).toBe(200);
+    expect(queries.removeHouseholdMember).toHaveBeenCalledWith('hh-1', 'uuid-1');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// DELETE /api/v1/household/member/:userId
+// ---------------------------------------------------------------------------
+describe('DELETE /api/v1/household/member/:userId', () => {
+  test('returns 401 without token', async () => {
+    const res = await request(app).delete('/api/v1/household/member/uuid-2');
+    expect(res.status).toBe(401);
+  });
+
+  test('returns 400 when trying to remove self', async () => {
+    const res = await request(app)
+      .delete('/api/v1/household/member/uuid-1')
+      .set('Authorization', `Bearer ${validToken}`);
+    expect(res.status).toBe(400);
+  });
+
+  test('returns 404 when user not in household', async () => {
+    queries.getHouseholdByUserId.mockResolvedValue(null);
+    const res = await request(app)
+      .delete('/api/v1/household/member/uuid-2')
+      .set('Authorization', `Bearer ${validToken}`);
+    expect(res.status).toBe(404);
+  });
+
+  test('returns 403 when caller is not owner', async () => {
+    queries.getHouseholdByUserId.mockResolvedValue({
+      id: 'hh-1',
+      name: 'Our Home',
+      members: [{ user_id: 'uuid-1', role: 'member' }],
+    });
+    const res = await request(app)
+      .delete('/api/v1/household/member/uuid-2')
+      .set('Authorization', `Bearer ${validToken}`);
+    expect(res.status).toBe(403);
+  });
+
+  test('returns 200 and removes member when owner', async () => {
+    queries.getHouseholdByUserId.mockResolvedValue({
+      id: 'hh-1',
+      name: 'Our Home',
+      members: [{ user_id: 'uuid-1', role: 'owner' }],
+    });
+    queries.removeHouseholdMember.mockResolvedValue();
+    const res = await request(app)
+      .delete('/api/v1/household/member/uuid-2')
+      .set('Authorization', `Bearer ${validToken}`);
+    expect(res.status).toBe(200);
+    expect(queries.removeHouseholdMember).toHaveBeenCalledWith('hh-1', 'uuid-2');
   });
 });

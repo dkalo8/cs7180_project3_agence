@@ -150,4 +150,5 @@ _Last updated: 2026-04-06_
 
 **Session 2026-04-09 (continued):**
 - 9A Household Accounts ✅ — households + household_members tables in migrate.js; POST/GET /api/v1/household + POST /api/v1/household/invite; 13 new tests (195 total); Settings page: create household form + member list + invite (owner only); Dashboard: "Household: [name]" badge in equity hero.
-- **Next: 9B Aesthetic Redesign** (earthy dark palette, Google Fonts, all pages in one CSS pass)
+- 9A part 2 ✅ — DELETE /household/leave + DELETE /household/member/:userId; shared data: goals/watchlist/transactions now aggregate across all household member IDs via `= ANY(uuid[])` queries; 203/203 tests.
+- **Next: commit all 9A work, then 9B Aesthetic Redesign**

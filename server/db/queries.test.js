@@ -162,12 +162,12 @@ describe('getTransactionsByUserId', () => {
     const fakeTxs = [{ id: 'tx-1', date: '2026-04-01' }];
     mockQuery.mockResolvedValueOnce({ rows: fakeTxs });
 
-    const result = await queries.getTransactionsByUserId('uuid-1');
+    const result = await queries.getTransactionsByUserId(['uuid-1']);
 
     const [sql, params] = mockQuery.mock.calls[0];
     expect(sql).toMatch(/SELECT.*FROM transactions/i);
     expect(sql).toMatch(/ORDER BY/i);
-    expect(params).toContain('uuid-1');
+    expect(params[0]).toContain('uuid-1');
     expect(result).toEqual(fakeTxs);
   });
 });

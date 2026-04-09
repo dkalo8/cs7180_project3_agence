@@ -13,7 +13,10 @@ const queries = require('../db/queries');
 
 const validToken = jwt.sign({ userId: 'uuid-1' }, 'test-secret');
 
-beforeEach(() => jest.clearAllMocks());
+beforeEach(() => {
+  jest.clearAllMocks();
+  queries.getHouseholdMemberIds.mockResolvedValue(['uuid-1']);
+});
 
 // ---------------------------------------------------------------------------
 // GET /api/v1/goals

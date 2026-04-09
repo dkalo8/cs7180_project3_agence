@@ -59,4 +59,40 @@ router.post('/invite', authMiddleware, async (req, res, next) => {
   }
 });
 
+// DELETE /api/v1/household/leave — leave current household
+router.delete('/leave', authMiddleware, async (req, res, next) => {
+  try {
+    const household = await queries.getHouseholdByUserId(req.userId);
+    if (!household) {
+      return res.status(404).json({ error: 'You are not in a household' });
+    }
+    await queries.removeHouseholdMember(household.id, req.userId);
+    return res.status(200).json({ message: 'Left household' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// DELETE /api/v1/household/member/:userId — owner removes a member
+router.delete('/member/:targetUserId', authMiddleware, async (req, res, next) => {
+  const { targetUserId } = req.params;
+  if (targetUserId === req.userId) {
+    return res.status(400).json({ error: 'Use DELETE /leave to remove yourself' });
+  }
+  try {
+    const household = await queries.getHouseholdByUserId(req.userId);
+    if (!household) {
+      return res.status(404).json({ error: 'You are not in a household' });
+    }
+    const me = (household.members || []).find(m => m.user_id === req.userId);
+    if (!me || me.role !== 'owner') {
+      return res.status(403).json({ error: 'Only the owner can remove members' });
+    }
+    await queries.removeHouseholdMember(household.id, targetUserId);
+    return res.status(200).json({ message: 'Member removed' });
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

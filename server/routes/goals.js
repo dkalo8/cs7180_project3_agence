@@ -7,7 +7,8 @@ const queries = require('../db/queries');
 // GET /api/v1/goals
 router.get('/', authMiddleware, async (req, res, next) => {
   try {
-    const goals = await queries.getGoalsByUserId(req.userId);
+    const userIds = await queries.getHouseholdMemberIds(req.userId);
+    const goals = await queries.getGoalsByUserId(userIds);
     return res.status(200).json({ goals });
   } catch (err) {
     next(err);

@@ -28,6 +28,7 @@ const SNAPSHOTS = {
 beforeEach(() => {
   jest.clearAllMocks();
   alpacaService.getSnapshots.mockResolvedValue(SNAPSHOTS);
+  queries.getHouseholdMemberIds.mockResolvedValue(['uuid-1']);
 });
 
 const WATCHLIST = [

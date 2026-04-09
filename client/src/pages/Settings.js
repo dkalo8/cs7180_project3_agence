@@ -66,6 +66,24 @@ export default function Settings() {
     }
   }
 
+  async function handleRemoveMember(targetUserId) {
+    try {
+      await api.delete(`/household/member/${targetUserId}`);
+      api.get('/household').then(({ data }) => setHousehold(data.household)).catch(() => {});
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to remove member');
+    }
+  }
+
+  async function handleLeave() {
+    try {
+      await api.delete('/household/leave');
+      setHousehold(null);
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to leave household');
+    }
+  }
+
   const isOwner = household?.members?.some(m => m.role === 'owner' && m.user_id === profile?.id);
 
   return (
@@ -142,6 +160,16 @@ export default function Settings() {
                     <tr key={m.user_id}>
                       <td>{m.email}</td>
                       <td style={{ color: m.role === 'owner' ? '#3b82f6' : '#64748b', textTransform: 'capitalize' }}>{m.role}</td>
+                      <td>
+                        {isOwner && m.user_id !== profile?.id && (
+                          <button
+                            onClick={() => handleRemoveMember(m.user_id)}
+                            style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', background: '#e05c5c', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -170,6 +198,12 @@ export default function Settings() {
                   {inviteError && <p className="error" style={{ marginTop: '0.4rem' }}>{inviteError}</p>}
                 </div>
               )}
+              <button
+                onClick={handleLeave}
+                style={{ marginTop: '1rem', fontSize: '0.8rem', padding: '0.3rem 0.8rem', background: 'transparent', color: '#94a3b8', border: '1px solid #475569', borderRadius: 6, cursor: 'pointer' }}
+              >
+                Leave household
+              </button>
             </div>
           )}
         </section>

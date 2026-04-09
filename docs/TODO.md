@@ -143,8 +143,8 @@
 
 - [x] **DB migration** — `households` + `household_members` tables added to `migrate.js` (idempotent, runs on startup)
 - [x] **Backend routes** — `POST /api/v1/household` (create), `POST /api/v1/household/invite` (invite by email), `GET /api/v1/household`; 13 tests
-- [x] **Frontend** — Account page: create household form, member list, invite by email (owner only); Dashboard shows "Household: [name]" badge in equity hero
-- [ ] **Shared data** — stretch: aggregate insights/goals/watchlist across all household member user IDs (deferred)
+- [x] **Frontend** — Account page: create form, member list, Remove button (owner), Leave button, invite form; Dashboard shows "Household: [name]" badge
+- [x] **Shared data** — goals/watchlist/transactions queries use `= ANY(uuid[])` to aggregate all household member data; `getHouseholdMemberIds` called in each route
 
 ### 9B: Aesthetic Redesign
 > Overhaul visual design from AI-generated HTML-y look to polished product UI.
