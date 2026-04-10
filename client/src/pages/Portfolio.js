@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client';
+import { getPortfolio, invalidate } from '../api/apiCache';
 import AppNav from '../components/AppNav';
 
 export default function Portfolio() {
@@ -24,8 +25,8 @@ export default function Portfolio() {
   const [submitting, setSubmitting] = useState(false);
 
   function fetchPortfolio() {
-    return api.get('/portfolio')
-      .then(({ data }) => {
+    return getPortfolio()
+      .then(data => {
         setPositions(data.positions || []);
         setSummary({ cash: data.cash, equity: data.equity });
       })
@@ -78,6 +79,7 @@ export default function Portfolio() {
       setQuantity('');
       setLimitPrice('');
       setStopPrice('');
+      invalidate('portfolio');
       setLoading(true);
       await fetchPortfolio();
       await fetchTrades();

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client';
+import { getGoals, invalidate } from '../api/apiCache';
 import AppNav from '../components/AppNav';
 
 export default function Goals() {
@@ -15,8 +16,8 @@ export default function Goals() {
   const [formError, setFormError] = useState('');
 
   function fetchGoals() {
-    return api.get('/goals')
-      .then(({ data }) => setGoals(data.goals || []))
+    return getGoals()
+      .then(goals => setGoals(goals))
       .catch(() => setError('Failed to load goals'))
       .finally(() => setLoading(false));
   }
@@ -40,6 +41,7 @@ export default function Goals() {
       setName('');
       setTarget('');
       setMonthlyContribution('');
+      invalidate('goals');
       setLoading(true);
       await fetchGoals();
     } catch {

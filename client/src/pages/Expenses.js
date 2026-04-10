@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import AppNav from '../components/AppNav';
-import api from '../api/client';
+import { getTransactions } from '../api/apiCache';
 
 const CATEGORY_LABELS = {
   FOOD_AND_DRINK: 'Food & Drink',
@@ -62,10 +62,8 @@ export default function Expenses() {
   const highlightAmount = searchParams.get('amount');
 
   useEffect(() => {
-    api.get('/transactions')
-      .then(({ data }) => {
-        setAllTransactions(data.transactions || []);
-      })
+    getTransactions()
+      .then(transactions => setAllTransactions(transactions))
       .catch(() => setError('Could not load transactions.'))
       .finally(() => setLoading(false));
   }, []);

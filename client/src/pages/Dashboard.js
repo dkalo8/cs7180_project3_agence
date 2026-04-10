@@ -5,6 +5,7 @@ import AppNav from '../components/AppNav';
 import PortfolioChart from '../components/PortfolioChart';
 import api from '../api/client';
 import { getCachedInsights } from '../api/insightsCache';
+import { getPortfolio, getAccounts, getGoals, getHousehold } from '../api/apiCache';
 
 function fmt(n, decimals = 2) {
   if (n == null || isNaN(n)) return '--';
@@ -49,17 +50,16 @@ export default function Dashboard() {
   // Load portfolio + accounts in parallel on mount
   useEffect(() => {
     Promise.all([
-      api.get('/portfolio').catch(() => null),
-      api.get('/accounts').catch(() => null),
-      api.get('/goals').catch(() => null),
-      api.get('/household').catch(() => null),
-    ]).then(([portfolioRes, accountsRes, goalsRes, householdRes]) => {
-      if (portfolioRes) setPortfolio(portfolioRes.data);
-      if (accountsRes?.data?.accounts?.length > 0) setBankConnected(true);
-      const goals = goalsRes?.data?.goals || [];
-      const active = goals.filter(g => parseFloat(g.current) < parseFloat(g.target));
+      getPortfolio().catch(() => null),
+      getAccounts().catch(() => null),
+      getGoals().catch(() => null),
+      getHousehold().catch(() => null),
+    ]).then(([portfolioData, accounts, goals, household]) => {
+      if (portfolioData) setPortfolio(portfolioData);
+      if (accounts?.length > 0) setBankConnected(true);
+      const active = (goals || []).filter(g => parseFloat(g.current) < parseFloat(g.target));
       if (active.length > 0) setTopGoal(active[0]);
-      if (householdRes?.data?.household) setHousehold(householdRes.data.household);
+      if (household) setHousehold(household);
       setLoading(false);
     });
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import AppNav from '../components/AppNav';
 import api from '../api/client';
+import { getWatchlist } from '../api/apiCache';
 
 export default function Watchlist() {
   const [watchlist, setWatchlist] = useState([]);
@@ -10,8 +11,8 @@ export default function Watchlist() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    api.get('/watchlist')
-      .then(({ data }) => setWatchlist(data.watchlist || []))
+    getWatchlist()
+      .then(watchlist => setWatchlist(watchlist))
       .catch(() => setError('Could not load watchlist.'))
       .finally(() => setLoading(false));
   }, []);
