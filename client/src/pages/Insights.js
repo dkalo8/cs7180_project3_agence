@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/client';
+import { getCachedInsights } from '../api/insightsCache';
 import AppNav from '../components/AppNav';
 
 const SOURCE_ROUTE = {
@@ -20,8 +21,8 @@ export default function Insights() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    api.get('/insights')
-      .then(({ data }) => setInsights(data.insights || []))
+    getCachedInsights()
+      .then(insights => setInsights(insights))
       .catch(err => setError(err.response?.data?.error || 'Failed to load insights'))
       .finally(() => setLoading(false));
   }, []);

@@ -4,6 +4,7 @@ import PlaidLink from '../components/PlaidLink';
 import AppNav from '../components/AppNav';
 import PortfolioChart from '../components/PortfolioChart';
 import api from '../api/client';
+import { getCachedInsights } from '../api/insightsCache';
 
 function fmt(n, decimals = 2) {
   if (n == null || isNaN(n)) return '--';
@@ -62,9 +63,9 @@ export default function Dashboard() {
       setLoading(false);
     });
 
-    // Insights fetched separately — can be slow (orchestrator + judge)
-    api.get('/insights')
-      .then(({ data }) => setInsights(data.insights?.slice(0, 3) || []))
+    // Insights fetched separately — cached in sessionStorage for 5 min
+    getCachedInsights()
+      .then(insights => setInsights(insights.slice(0, 3)))
       .catch(() => setInsights([]))
       .finally(() => setInsightsLoading(false));
   }, []);
