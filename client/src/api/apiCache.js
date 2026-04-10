@@ -50,3 +50,5 @@ export const getGoals       = () => getCached('goals',        '/goals',        5
 export const getTransactions = () => getCached('transactions', '/transactions', 5 * MIN, d => d.transactions || []);
 export const getWatchlist   = () => getCached('watchlist',    '/watchlist',    2 * MIN, d => d.watchlist || []);
 export const getHousehold   = () => getCached('household',    '/household',    5 * MIN, d => d.household);
+export const getProfile     = () => getCached('profile',      '/auth/me',      5 * MIN, d => d);
+export const getTradeHistory = () => getCached('trades',      '/trades',       2 * MIN, d => d.trades || []);

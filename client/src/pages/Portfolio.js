@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client';
-import { getPortfolio, invalidate } from '../api/apiCache';
+import { getPortfolio, getTradeHistory, invalidate } from '../api/apiCache';
 import AppNav from '../components/AppNav';
 
 export default function Portfolio() {
@@ -35,8 +35,8 @@ export default function Portfolio() {
   }
 
   function fetchTrades() {
-    return api.get('/trades')
-      .then(({ data }) => setTrades(data.trades || []))
+    return getTradeHistory()
+      .then(trades => setTrades(trades))
       .catch(() => {})
       .finally(() => setTradesLoading(false));
   }
@@ -80,8 +80,10 @@ export default function Portfolio() {
       setLimitPrice('');
       setStopPrice('');
       invalidate('portfolio');
+      invalidate('trades');
       setLoading(true);
       await fetchPortfolio();
+      fetchTrades();
       await fetchTrades();
     } catch (err) {
       setTradeError(err.response?.data?.error || 'Trade failed');

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AppNav from '../components/AppNav';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/client';
+import { getAccounts, getHousehold, getProfile, invalidate } from '../api/apiCache';
 
 export default function Settings() {
   const { logout } = useAuth();
@@ -23,9 +24,9 @@ export default function Settings() {
 
   function fetchAll() {
     return Promise.all([
-      api.get('/auth/me').then(({ data }) => setProfile(data)).catch(() => {}),
-      api.get('/accounts').then(({ data }) => setAccounts(data.accounts || [])).catch(() => {}),
-      api.get('/household').then(({ data }) => setHousehold(data.household)).catch(() => {}),
+      getProfile().then(data => setProfile(data)).catch(() => {}),
+      getAccounts().then(accounts => setAccounts(accounts)).catch(() => {}),
+      getHousehold().then(household => setHousehold(household)).catch(() => {}),
     ]).finally(() => setLoading(false));
   }
 
@@ -39,8 +40,9 @@ export default function Settings() {
     try {
       await api.post('/household', { name: hhName.trim() });
       setHhName('');
-      const { data } = await api.get('/household');
-      setHousehold(data.household);
+      invalidate('household');
+      const household = await getHousehold();
+      setHousehold(household);
     } catch (err) {
       setCreateError(err.response?.data?.error || 'Failed to create household');
     } finally {
@@ -59,7 +61,8 @@ export default function Settings() {
       setInviteMsg(`Invited ${inviteEmail.trim()}`);
       setInviteEmail('');
       // Refresh household to show new member
-      api.get('/household').then(({ data }) => setHousehold(data.household)).catch(() => {});
+      invalidate('household');
+      getHousehold().then(household => setHousehold(household)).catch(() => {});
     } catch (err) {
       setInviteError(err.response?.data?.error || 'Failed to invite');
     } finally {
@@ -70,7 +73,8 @@ export default function Settings() {
   async function handleRemoveMember(targetUserId) {
     try {
       await api.delete(`/household/member/${targetUserId}`);
-      api.get('/household').then(({ data }) => setHousehold(data.household)).catch(() => {});
+      invalidate('household');
+      getHousehold().then(household => setHousehold(household)).catch(() => {});
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to remove member');
     }
@@ -79,6 +83,7 @@ export default function Settings() {
   async function handleLeave() {
     try {
       await api.delete('/household/leave');
+      invalidate('household');
       setHousehold(null);
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to leave household');

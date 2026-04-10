@@ -5,7 +5,7 @@ import AppNav from '../components/AppNav';
 import PortfolioChart from '../components/PortfolioChart';
 import api from '../api/client';
 import { getCachedInsights } from '../api/insightsCache';
-import { getPortfolio, getAccounts, getGoals, getHousehold, getTransactions, getWatchlist } from '../api/apiCache';
+import { getPortfolio, getAccounts, getGoals, getHousehold, getTransactions, getWatchlist, getProfile, getTradeHistory } from '../api/apiCache';
 
 function fmt(n, decimals = 2) {
   if (n == null || isNaN(n)) return '--';
@@ -63,9 +63,11 @@ export default function Dashboard() {
       setLoading(false);
     });
 
-    // Pre-warm caches for Expenses and Watchlist tabs (fire-and-forget)
+    // Pre-warm caches for other tabs (fire-and-forget)
     getTransactions().catch(() => {});
     getWatchlist().catch(() => {});
+    getProfile().catch(() => {});
+    getTradeHistory().catch(() => {});
 
     // Insights fetched separately — cached in sessionStorage for 5 min
     getCachedInsights()
