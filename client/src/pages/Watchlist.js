@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import AppNav from '../components/AppNav';
 import api from '../api/client';
 import { getWatchlist, invalidate, invalidateAllNews, getNews } from '../api/apiCache';
@@ -15,6 +16,16 @@ export default function Watchlist() {
   const [newsLoading, setNewsLoading] = useState(false);
   const [expandedTickers, setExpandedTickers] = useState(new Set());
   const [newsSearch, setNewsSearch] = useState('');
+
+  const location = useLocation();
+  const highlightTicker = new URLSearchParams(location.search).get('ticker');
+  const highlightRef = useRef(null);
+
+  useEffect(() => {
+    if (!loading && highlightRef.current) {
+      setTimeout(() => highlightRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+    }
+  }, [loading]);
 
   async function refreshNews(items) {
     if (!items.length) { setNews([]); return; }
@@ -143,8 +154,13 @@ export default function Watchlist() {
                   const chg = item.changePercent;
                   const chgColor = chg == null ? '' : chg >= 0 ? '#4caf82' : '#e05c5c';
                   const chgLabel = chg == null ? '—' : `${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%`;
+                  const isHighlighted = item.ticker === highlightTicker;
                   return (
-                    <tr key={item.ticker}>
+                    <tr
+                      key={item.ticker}
+                      ref={isHighlighted ? highlightRef : null}
+                      className={isHighlighted ? 'tx-highlight' : ''}
+                    >
                       <td><span className="ticker">{item.ticker}</span></td>
                       <td className="right">{item.price != null ? `$${item.price.toFixed(2)}` : '—'}</td>
                       <td className="right" style={{ color: chgColor, fontWeight: chg != null ? 600 : 'normal' }}>{chgLabel}</td>

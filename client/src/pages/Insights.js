@@ -43,7 +43,9 @@ export default function Insights() {
               ? `${base}?txId=${insight.txId}`
               : base && insight.amount != null
                 ? `${base}?amount=${insight.amount}`
-                : base;
+                : base && insight.ticker
+                  ? `${base}?ticker=${insight.ticker}`
+                  : base;
             return (
               <li
                 key={i}
