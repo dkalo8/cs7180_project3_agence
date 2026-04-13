@@ -20,6 +20,7 @@ original-proposal.md
 *.png
 fixes.md
 aesthetic-redesign.md
+post-p3.md
 
 # OMC runtime state (session scratch, not project code)
 .omc/
