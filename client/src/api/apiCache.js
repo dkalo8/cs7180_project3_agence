@@ -52,3 +52,8 @@ export const getWatchlist   = () => getCached('watchlist',    '/watchlist',    2
 export const getHousehold   = () => getCached('household',    '/household',    5 * MIN, d => d.household);
 export const getProfile     = () => getCached('profile',      '/auth/me',      5 * MIN, d => d);
 export const getTradeHistory = () => getCached('trades',      '/trades',       2 * MIN, d => d.trades || []);
+
+export const getNews = (tickers) => {
+  const joined = tickers.join(',');
+  return getCached(`news_${joined}`, `/news?tickers=${joined}`, 2 * MIN, d => d.news || []);
+};

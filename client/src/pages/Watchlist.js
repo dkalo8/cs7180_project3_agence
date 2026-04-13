@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import AppNav from '../components/AppNav';
 import api from '../api/client';
-import { getWatchlist, invalidate } from '../api/apiCache';
+import { getWatchlist, invalidate, getNews } from '../api/apiCache';
 
 export default function Watchlist() {
   const [watchlist, setWatchlist] = useState([]);
@@ -10,9 +10,23 @@ export default function Watchlist() {
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState('');
 
+  const [news, setNews] = useState([]);
+  const [newsOpen, setNewsOpen] = useState(false);
+  const [newsLoading, setNewsLoading] = useState(false);
+
   useEffect(() => {
     getWatchlist()
-      .then(watchlist => setWatchlist(watchlist))
+      .then(items => {
+        setWatchlist(items);
+        if (items.length > 0) {
+          const tickers = items.map(w => w.ticker);
+          setNewsLoading(true);
+          getNews(tickers)
+            .then(setNews)
+            .catch(() => {})
+            .finally(() => setNewsLoading(false));
+        }
+      })
       .catch(() => setError('Could not load watchlist.'))
       .finally(() => setLoading(false));
   }, []);
@@ -124,6 +138,48 @@ export default function Watchlist() {
             <p className="muted" style={{ marginTop: '0.75rem', fontSize: '0.8rem' }}>
               AI Insights flags watched tickers when they move ≥3% or show negative news sentiment.
             </p>
+          </section>
+        )}
+
+        {!loading && watchlist.length > 0 && (
+          <section className="expenses-section">
+            <button
+              className="news-toggle-btn"
+              onClick={() => setNewsOpen(o => !o)}
+              aria-expanded={newsOpen}
+            >
+              <span>Recent News</span>
+              <span className="news-toggle-icon">{newsOpen ? '▲' : '▼'}</span>
+            </button>
+
+            {newsOpen && (
+              <div className="news-feed" style={{ marginTop: '0.75rem' }}>
+                {newsLoading && <p className="muted">Loading news…</p>}
+                {!newsLoading && news.length === 0 && (
+                  <p className="muted">No recent news found for watched tickers.</p>
+                )}
+                {!newsLoading && news.map(({ ticker, articles }) => {
+                  if (!articles || articles.length === 0) return null;
+                  return (
+                    <div key={ticker} className="news-ticker-group">
+                      <h4 className="news-ticker-label">{ticker}</h4>
+                      <ul className="news-list">
+                        {articles.map((a, i) => (
+                          <li key={i} className="news-item">
+                            <a href={a.url} target="_blank" rel="noopener noreferrer" className="news-headline">
+                              {a.headline}
+                            </a>
+                            <span className="news-meta">
+                              {a.source} · {a.datetime ? new Date(a.datetime * 1000).toLocaleDateString() : ''}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </section>
         )}
       </main>

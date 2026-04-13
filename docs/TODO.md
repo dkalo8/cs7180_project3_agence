@@ -18,12 +18,10 @@
 ### 2. E2E CI Fix ✅
 - [x] Added backend warm-up step to `.github/workflows/ci.yml` — polls `/health` up to 12× (15s apart, max 3 min) before running Playwright; fixes Render cold-start timeouts
 
-### 3. 9D: Watchlist News Feed
-> Surface Finnhub news directly in the UI — most contextual placement is Watchlist since users are already in market-watching mode.
-
-- [ ] **Backend** — `GET /api/v1/news?tickers=AAPL,TSLA` — Finnhub news articles for given tickers; return `{ ticker, headline, summary, url, source, datetime, sentiment }`
-- [ ] **Frontend** — collapsible "Recent News" section at bottom of `Watchlist.js`; 3–5 articles per ticker; sentiment badge (positive/negative/neutral); links open in new tab
-- [ ] **Cache** — add `getNews(tickers)` to `apiCache.js` with short TTL (2 min); pre-warm on Dashboard if watchlist tickers known
+### 3. 9D: Watchlist News Feed ✅
+- [x] **Backend** — `GET /api/v1/news?tickers=AAPL,TSLA` — `finnhub.getNewsArticles()`, Promise.all per ticker, graceful fallback to `[]`; 6 tests (214 total)
+- [x] **Frontend** — collapsible "Recent News" section at bottom of `Watchlist.js`; 5 articles per ticker; links open in new tab; loads after watchlist fetch
+- [x] **Cache** — `getNews(tickers)` in `apiCache.js` with 2-min TTL; cache key includes ticker list
 
 ### 3. 9E: Nav Redesign (dropdown grouping)
 > Collapse 7 flat nav items into grouped dropdowns for a cleaner, more scalable nav.
