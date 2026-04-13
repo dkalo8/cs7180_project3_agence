@@ -35,24 +35,25 @@ async function sendResetEmail(email, token) {
   const resetUrl = `${clientUrl}/reset-password?token=${token}`;
   const html = `<p>Click <a href="${resetUrl}">here</a> to reset your Agence password. This link expires in 1 hour.</p><p>If you did not request this, you can ignore this email.</p>`;
 
-  // Gmail SMTP via nodemailer (preferred — works for any recipient)
+  // Resend (HTTPS API — works on Render free tier; SMTP ports are blocked)
+  if (process.env.RESEND_API_KEY) {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const fromAddr = process.env.RESEND_FROM || 'Agence <onboarding@resend.dev>';
+    await resend.emails.send({ from: fromAddr, to: email, subject: 'Reset your Agence password', html });
+    return;
+  }
+
+  // Gmail SMTP fallback (only works outside Render free tier)
   if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    // Pre-resolve to IPv4 — Render free tier blocks IPv6 outbound, and
-    // nodemailer's `family:4` option is not reliably honored.
     let smtpHost = 'smtp.gmail.com';
     try {
       const [ipv4] = await dns.resolve4('smtp.gmail.com');
       smtpHost = ipv4;
-    } catch { /* fall through to hostname */ }
-
+    } catch { /* use hostname */ }
     const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: 587,
-      secure: false, // STARTTLS
+      host: smtpHost, port: 587, secure: false,
       auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-      connectionTimeout: 8000,
-      greetingTimeout: 8000,
-      socketTimeout: 8000,
+      connectionTimeout: 3000, greetingTimeout: 3000, socketTimeout: 3000,
     });
     await transporter.sendMail({
       from: `Agence <${process.env.SMTP_USER}>`,
@@ -60,18 +61,6 @@ async function sendResetEmail(email, token) {
       subject: 'Reset your Agence password',
       html,
     }).catch(err => console.error('[smtp] sendMail error:', err.message)); // eslint-disable-line no-console
-    return;
-  }
-
-  // Resend fallback
-  if (process.env.RESEND_API_KEY) {
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
-      from: 'Agence <onboarding@resend.dev>',
-      to: email,
-      subject: 'Reset your Agence password',
-      html,
-    });
     return;
   }
 
