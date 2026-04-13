@@ -9,6 +9,10 @@ const app = require('../index');
 // Mock queries and bcrypt — we're testing route logic, not the DB or hashing
 jest.mock('../db/queries');
 jest.mock('bcrypt');
+jest.mock('@sendgrid/mail', () => ({
+  setApiKey: jest.fn(),
+  send: jest.fn().mockResolvedValue([{ statusCode: 202 }]),
+}));
 jest.mock('resend', () => ({
   Resend: jest.fn().mockImplementation(() => ({
     emails: { send: jest.fn().mockResolvedValue({ id: 'mock-email-id' }) },

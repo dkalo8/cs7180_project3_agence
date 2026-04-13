@@ -4,9 +4,8 @@ const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Resend } = require('resend');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 const { OAuth2Client } = require('google-auth-library');
-const dns = require('dns').promises;
 const queries = require('../db/queries');
 const authMiddleware = require('../middleware/auth');
 
@@ -35,32 +34,19 @@ async function sendResetEmail(email, token) {
   const resetUrl = `${clientUrl}/reset-password?token=${token}`;
   const html = `<p>Click <a href="${resetUrl}">here</a> to reset your Agence password. This link expires in 1 hour.</p><p>If you did not request this, you can ignore this email.</p>`;
 
-  // Resend (HTTPS API — works on Render free tier; SMTP ports are blocked)
+  // SendGrid — HTTPS API, 100 emails/day free, works on Render free tier
+  if (process.env.SENDGRID_API_KEY) {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const from = process.env.SENDGRID_FROM || 'noreply@agence.app';
+    await sgMail.send({ from, to: email, subject: 'Reset your Agence password', html });
+    return;
+  }
+
+  // Resend fallback — HTTPS API, 3K/month free with verified domain
   if (process.env.RESEND_API_KEY) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const fromAddr = process.env.RESEND_FROM || 'Agence <onboarding@resend.dev>';
     await resend.emails.send({ from: fromAddr, to: email, subject: 'Reset your Agence password', html });
-    return;
-  }
-
-  // Gmail SMTP fallback (only works outside Render free tier)
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    let smtpHost = 'smtp.gmail.com';
-    try {
-      const [ipv4] = await dns.resolve4('smtp.gmail.com');
-      smtpHost = ipv4;
-    } catch { /* use hostname */ }
-    const transporter = nodemailer.createTransport({
-      host: smtpHost, port: 587, secure: false,
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-      connectionTimeout: 3000, greetingTimeout: 3000, socketTimeout: 3000,
-    });
-    await transporter.sendMail({
-      from: `Agence <${process.env.SMTP_USER}>`,
-      to: email,
-      subject: 'Reset your Agence password',
-      html,
-    }).catch(err => console.error('[smtp] sendMail error:', err.message)); // eslint-disable-line no-console
     return;
   }
 
