@@ -39,13 +39,16 @@ async function sendResetEmail(email, token) {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+      connectionTimeout: 8000,
+      greetingTimeout: 8000,
+      socketTimeout: 8000,
     });
     await transporter.sendMail({
       from: `Agence <${process.env.SMTP_USER}>`,
       to: email,
       subject: 'Reset your Agence password',
       html,
-    });
+    }).catch(err => console.error('[smtp] sendMail error:', err.message)); // eslint-disable-line no-console
     return;
   }
 
