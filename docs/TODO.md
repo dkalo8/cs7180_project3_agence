@@ -8,15 +8,17 @@
 
 ## Remaining Work (do in order)
 
-### 1. 9C: Google Auth
-> Add Google OAuth sign-in alongside existing email/password.
+### 1. 9C: Google Auth ✅
+- [x] Backend — `POST /api/v1/auth/google`; google-auth-library token verify; find-or-create user; link google_id to existing email accounts
+- [x] DB — `google_id VARCHAR UNIQUE`, `password_hash` NOT NULL dropped in migrate.js
+- [x] Frontend — `@react-oauth/google`; `GoogleLogin` on Login + Register; `GoogleOAuthProvider` in index.js
+- [x] Tests — 5 tests (mock google-auth-library); 197 total passing
+- [x] UX — "Sign-in: Google / Email+password" row in Account profile; Sign out removed from nav (Account page only); `invalidateAll()` on logout to clear cross-account cache
 
-- [ ] **Backend** — add Google OAuth strategy (Passport.js or direct token verify); new route `POST /api/v1/auth/google`; exchange Google ID token → issue JWT
-- [ ] **Frontend** — add "Sign in with Google" button to Login + Register pages; use `@react-oauth/google` or similar
-- [ ] **DB** — `users` table: add `google_id` column (nullable) via migration
-- [ ] **Tests** — mock Google token verify in unit test; integration test verifies JWT returned
+### 2. E2E CI Fix ✅
+- [x] Added backend warm-up step to `.github/workflows/ci.yml` — polls `/health` up to 12× (15s apart, max 3 min) before running Playwright; fixes Render cold-start timeouts
 
-### 2. 9D: Watchlist News Feed
+### 3. 9D: Watchlist News Feed
 > Surface Finnhub news directly in the UI — most contextual placement is Watchlist since users are already in market-watching mode.
 
 - [ ] **Backend** — `GET /api/v1/news?tickers=AAPL,TSLA` — Finnhub news articles for given tickers; return `{ ticker, headline, summary, url, source, datetime, sentiment }`
@@ -35,7 +37,15 @@
 - [ ] **Implementation** — CSS-only hover dropdowns or lightweight React state; mobile-friendly
 - [ ] **Tests** — update any nav-dependent E2E selectors in Playwright
 
-### 4. Polish backlog (lower priority)
+### 4. 9F: Password Reset
+> Allow users to reset their password via email link.
+
+- [ ] **Backend** — `POST /api/v1/auth/forgot-password` (send reset email); `POST /api/v1/auth/reset-password` (verify token, update hash); use time-limited signed token (JWT or random + DB column)
+- [ ] **Email** — use Resend or Nodemailer + Gmail SMTP; token valid 1 hour
+- [ ] **Frontend** — "Forgot password?" link on Login page → `/forgot-password` page; `/reset-password?token=...` page
+- [ ] **Tests** — mock email send; verify token expiry + hash update
+
+### 5. Polish backlog (lower priority)
 - [ ] **Drag-and-drop goal ordering** — let user set goal priority via drag-and-drop on Goals page
 - [ ] **Dashboard balance wiring** — after buying stock, dashboard should reflect updated equity, positions, and sparkline
 - [ ] **Responsive CSS** — mobile breakpoints across all pages

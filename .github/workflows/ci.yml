@@ -116,6 +116,18 @@ jobs:
       - name: Install Chromium
         run: npx playwright install chromium --with-deps
         working-directory: e2e
+      - name: Warm up Render backend
+        run: |
+          echo "Waiting for Render backend to wake up..."
+          for i in $(seq 1 12); do
+            status=$(curl -s -o /dev/null -w "%{http_code}" https://cs7180-project3-agence.onrender.com/health)
+            if [ "$status" = "200" ]; then
+              echo "Backend is up (attempt $i)"
+              break
+            fi
+            echo "Attempt $i: got HTTP $status — sleeping 15s"
+            sleep 15
+          done
       - name: Run E2E tests
         run: npm test
         working-directory: e2e

@@ -160,3 +160,10 @@ _Last updated: 2026-04-10_
 - 8H Frontend Caching ✅ — `insightsCache.js` + `apiCache.js`; Dashboard pre-warms all 8 endpoints; all pages read from cache; mutations invalidate before re-fetch. 192/192 tests.
 - TODO.md restructured — remaining work in priority order: 9C Google Auth → 9D News/Watchlist → 9E Nav redesign → polish → Phase 10 docs.
 - **Next: 9C Google Auth**
+
+**Session 2026-04-13:**
+- 9C Google Auth ✅ — `POST /api/v1/auth/google`; google-auth-library token verify; find-or-create-or-link user; migrate.js drops NOT NULL on password_hash + adds google_id UNIQUE; `@react-oauth/google` on Login + Register; 197/197 tests.
+- UX polish: "Sign-in: Google/Email" row in Account profile; Sign out removed from nav (Account page only); `invalidateAll()` on logout fixes cross-account cache bleed.
+- E2E CI fix ✅ — added Render warm-up step to ci.yml (polls /health up to 3 min before Playwright runs); fixes cold-start timeout failures.
+- Password reset added to TODO as 9F.
+- **Next: 9D Watchlist News Feed**
