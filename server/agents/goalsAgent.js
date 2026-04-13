@@ -15,7 +15,8 @@ function goalsAgent(userData) {
   if (goals.length === 0) return [];
 
   return goals.map(goal => {
-    const { name, target, current, monthlyContribution } = goal;
+    const { name, target, current, monthly_contribution, monthlyContribution } = goal;
+    const contrib = monthly_contribution ?? monthlyContribution;
     const remaining = target - current;
 
     // Already complete
@@ -31,7 +32,7 @@ function goalsAgent(userData) {
     }
 
     // No contributions
-    if (!monthlyContribution || monthlyContribution <= 0) {
+    if (!contrib || Number(contrib) <= 0) {
       return {
         type: 'goal_no_contributions',
         goalName: name,
@@ -42,7 +43,7 @@ function goalsAgent(userData) {
       };
     }
 
-    const monthsToComplete = Math.ceil(remaining / monthlyContribution);
+    const monthsToComplete = Math.ceil(remaining / Number(contrib));
     const projected = new Date();
     projected.setMonth(projected.getMonth() + monthsToComplete);
     const projectedDate = projected.toISOString().slice(0, 10);
@@ -52,7 +53,7 @@ function goalsAgent(userData) {
         type: 'goal_on_track',
         goalName: name,
         message: `"${name}" is on track — projected completion in ${monthsToComplete} month${monthsToComplete === 1 ? '' : 's'}`,
-        pace: monthlyContribution,
+        pace: Number(contrib),
         projectedDate,
         severity: 'info',
       };
@@ -61,8 +62,8 @@ function goalsAgent(userData) {
     return {
       type: 'goal_behind',
       goalName: name,
-      message: `"${name}" will take ${monthsToComplete} months at current pace ($${monthlyContribution}/mo)`,
-      pace: monthlyContribution,
+      message: `"${name}" will take ${monthsToComplete} months at current pace ($${Number(contrib)}/mo)`,
+      pace: Number(contrib),
       projectedDate,
       severity: monthsToComplete > 12 ? 'high' : 'medium',
     };

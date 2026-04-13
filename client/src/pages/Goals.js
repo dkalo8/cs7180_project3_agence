@@ -84,6 +84,7 @@ export default function Goals() {
     const [moved] = reordered.splice(from, 1);
     reordered.splice(to, 0, moved);
     setGoals(reordered);
+    invalidate('goals');
     api.patch('/goals/reorder', { order: reordered.map(g => g.id) }).catch(() => {});
   }
 
