@@ -6,9 +6,8 @@ let _client = null;
 
 function getClient() {
   if (!_client) {
-    const apiClient = finnhub.ApiClient.instance;
-    apiClient.authentications['api_key'].apiKey = process.env.FINNHUB_API_KEY;
-    _client = new finnhub.DefaultApi();
+    // finnhub v2: pass API key directly to constructor
+    _client = new finnhub.DefaultApi(process.env.FINNHUB_API_KEY);
   }
   return _client;
 }

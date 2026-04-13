@@ -42,9 +42,10 @@ export default function Watchlist() {
     setAdding(true);
     setError('');
     try {
-      const { data } = await api.post('/watchlist', { ticker });
+      await api.post('/watchlist', { ticker });
       invalidate('watchlist');
-      setWatchlist(prev => [data, ...prev]);
+      const items = await getWatchlist();
+      setWatchlist(items);
       setInput('');
     } catch {
       setError('Could not add ticker. Check it is a valid symbol.');
