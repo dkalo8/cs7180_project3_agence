@@ -12,6 +12,7 @@ export default function Goals() {
   const [name, setName] = useState('');
   const [target, setTarget] = useState('');
   const [monthlyContribution, setMonthlyContribution] = useState('');
+  const [goalType, setGoalType] = useState('savings');
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
 
@@ -37,10 +38,12 @@ export default function Goals() {
         name: name.trim(),
         target: parseFloat(target),
         monthlyContribution: monthlyContribution ? parseFloat(monthlyContribution) : 0,
+        goalType,
       });
       setName('');
       setTarget('');
       setMonthlyContribution('');
+      setGoalType('savings');
       invalidate('goals');
       setLoading(true);
       await fetchGoals();
@@ -85,6 +88,11 @@ export default function Goals() {
             onChange={e => setMonthlyContribution(e.target.value)}
             min="0"
           />
+          <select value={goalType} onChange={e => setGoalType(e.target.value)}>
+            <option value="savings">Savings</option>
+            <option value="growth">Growth</option>
+            <option value="speculation">Speculation</option>
+          </select>
           {formError && <p className="error">{formError}</p>}
           <button type="submit" disabled={submitting} className="btn-primary" style={{ padding: '0.6rem' }}>
             {submitting ? 'Saving…' : 'Add Goal'}
@@ -107,7 +115,14 @@ export default function Goals() {
               return (
                 <li key={goal.id} className="insight-card" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <strong>{goal.name}</strong>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <strong>{goal.name}</strong>
+                      {goal.goal_type && (
+                        <span className={`goal-type-badge goal-type-${goal.goal_type}`}>
+                          {goal.goal_type}
+                        </span>
+                      )}
+                    </div>
                     <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                       ${current.toLocaleString()} / ${Number(goal.target).toLocaleString()}
                     </span>

@@ -53,6 +53,8 @@ async function runMigrations() {
     // Google auth columns (idempotent)
     await pool.query(`ALTER TABLE users ALTER COLUMN password_hash DROP NOT NULL`).catch(() => {});
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) UNIQUE`);
+    // Goal type column (idempotent)
+    await pool.query(`ALTER TABLE goals ADD COLUMN IF NOT EXISTS goal_type VARCHAR(20) DEFAULT 'savings'`);
     console.log('[migrate] schema up to date'); // eslint-disable-line no-console
   } finally {
     await pool.end();

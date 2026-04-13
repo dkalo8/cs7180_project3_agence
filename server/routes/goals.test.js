@@ -79,6 +79,7 @@ describe('POST /api/v1/goals', () => {
       target: 5000,
       current: 0,
       monthly_contribution: 300,
+      goal_type: 'savings',
     });
 
     const res = await request(app)
@@ -89,6 +90,35 @@ describe('POST /api/v1/goals', () => {
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('goal');
     expect(res.body.goal).toHaveProperty('name', 'Emergency Fund');
-    expect(queries.createGoal).toHaveBeenCalledWith('uuid-1', 'Emergency Fund', 5000, 300);
+    expect(queries.createGoal).toHaveBeenCalledWith('uuid-1', 'Emergency Fund', 5000, 300, 'savings');
+  });
+
+  test('returns 201 with explicit goal_type', async () => {
+    queries.createGoal.mockResolvedValue({
+      id: 'goal-uuid-2',
+      name: 'Tech Stocks',
+      target: 10000,
+      current: 0,
+      monthly_contribution: 500,
+      goal_type: 'growth',
+    });
+
+    const res = await request(app)
+      .post('/api/v1/goals')
+      .set('Authorization', `Bearer ${validToken}`)
+      .send({ name: 'Tech Stocks', target: 10000, monthlyContribution: 500, goalType: 'growth' });
+
+    expect(res.status).toBe(201);
+    expect(res.body.goal).toHaveProperty('goal_type', 'growth');
+    expect(queries.createGoal).toHaveBeenCalledWith('uuid-1', 'Tech Stocks', 10000, 500, 'growth');
+  });
+
+  test('returns 400 for invalid goal_type', async () => {
+    const res = await request(app)
+      .post('/api/v1/goals')
+      .set('Authorization', `Bearer ${validToken}`)
+      .send({ name: 'Mystery', target: 1000, goalType: 'invalid' });
+
+    expect(res.status).toBe(400);
   });
 });

@@ -104,12 +104,12 @@ async function upsertBalance(accountId, current, available) {
 // Goals
 // ---------------------------------------------------------------------------
 
-async function createGoal(userId, name, target, monthlyContribution) {
+async function createGoal(userId, name, target, monthlyContribution, goalType = 'savings') {
   const { rows } = await pool.query(
-    `INSERT INTO goals (user_id, name, target, monthly_contribution)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO goals (user_id, name, target, monthly_contribution, goal_type)
+     VALUES ($1, $2, $3, $4, $5)
      RETURNING *`,
-    [userId, name, target, monthlyContribution]
+    [userId, name, target, monthlyContribution, goalType]
   );
   return rows[0];
 }

@@ -35,8 +35,8 @@
 - [x] **Tests** — 9 new tests (400/401/200 cases, expired token, wrong type); 223/223 total
 
 ### 5. Polish backlog (in priority order)
-- [ ] **Responsive CSS** — mobile breakpoints across all pages (highest visibility, affects every page)
-- [ ] **Dashboard balance wiring** — after buying stock, dashboard should reflect updated equity, positions, and sparkline
+- [x] **Responsive CSS** — mobile breakpoints across all pages (highest visibility, affects every page)
+- [x] **Dashboard balance wiring** — after buying stock, dashboard should reflect updated equity, positions, and sparkline
 - [ ] **Goal types** — add `goal_type` column (savings/growth/speculation); display type badge
 - [ ] **Drag-and-drop goal ordering** — let user set goal priority via drag-and-drop on Goals page
 - [ ] **Investor risk profile** — settings field for risk tolerance (conservative/moderate/aggressive); feed into autopilot agent rules
