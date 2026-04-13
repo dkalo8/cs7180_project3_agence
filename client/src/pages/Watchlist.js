@@ -13,6 +13,24 @@ export default function Watchlist() {
   const [news, setNews] = useState([]);
   const [newsOpen, setNewsOpen] = useState(false);
   const [newsLoading, setNewsLoading] = useState(false);
+  const [expandedTickers, setExpandedTickers] = useState(new Set());
+
+  async function refreshNews(items) {
+    if (!items.length) { setNews([]); return; }
+    setNewsLoading(true);
+    try {
+      const data = await getNews(items.map(w => w.ticker));
+      setNews(data);
+    } catch { /* silent */ } finally { setNewsLoading(false); }
+  }
+
+  function toggleExpanded(ticker) {
+    setExpandedTickers(prev => {
+      const next = new Set(prev);
+      if (next.has(ticker)) next.delete(ticker); else next.add(ticker);
+      return next;
+    });
+  }
 
   useEffect(() => {
     getWatchlist()
@@ -47,6 +65,7 @@ export default function Watchlist() {
       const items = await getWatchlist();
       setWatchlist(items);
       setInput('');
+      refreshNews(items);
     } catch {
       setError('Could not add ticker. Check it is a valid symbol.');
     } finally {
@@ -58,7 +77,9 @@ export default function Watchlist() {
     try {
       await api.delete(`/watchlist/${ticker}`);
       invalidate('watchlist');
-      setWatchlist(prev => prev.filter(w => w.ticker !== ticker));
+      const updated = watchlist.filter(w => w.ticker !== ticker);
+      setWatchlist(updated);
+      refreshNews(updated);
     } catch {
       setError('Could not remove ticker.');
     }
@@ -161,6 +182,9 @@ export default function Watchlist() {
                 )}
                 {!newsLoading && news.map(({ ticker, articles, summary }) => {
                   if (!articles || articles.length === 0) return null;
+                  const isExpanded = expandedTickers.has(ticker);
+                  const visible = isExpanded ? articles : articles.slice(0, 3);
+                  const extra = articles.length - 3;
                   return (
                     <div key={ticker} className="news-ticker-group">
                       <h4 className="news-ticker-label">{ticker}</h4>
@@ -170,7 +194,7 @@ export default function Watchlist() {
                         </p>
                       )}
                       <ul className="news-list">
-                        {articles.map((a, i) => (
+                        {visible.map((a, i) => (
                           <li key={i} className="news-item">
                             <a href={a.url} target="_blank" rel="noopener noreferrer" className="news-headline">
                               {a.headline}
@@ -181,6 +205,11 @@ export default function Watchlist() {
                           </li>
                         ))}
                       </ul>
+                      {extra > 0 && (
+                        <button className="news-more-btn" onClick={() => toggleExpanded(ticker)}>
+                          {isExpanded ? 'Show less' : `${extra} more article${extra > 1 ? 's' : ''}`}
+                        </button>
+                      )}
                     </div>
                   );
                 })}

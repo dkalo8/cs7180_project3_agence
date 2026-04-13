@@ -40,7 +40,7 @@ function getLatestNews(symbol) {
  * Get recent news articles for a ticker (used by /api/v1/news route).
  * Returns up to `limit` articles with full fields.
  */
-function getNewsArticles(symbol, limit = 3) {
+function getNewsArticles(symbol, limit = 7) {
   return new Promise((resolve) => {
     const today = new Date();
     const from = new Date(today - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
