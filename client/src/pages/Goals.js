@@ -114,7 +114,7 @@ export default function Goals() {
             onChange={e => setMonthlyContribution(e.target.value)}
             min="0"
           />
-          <select value={goalType} onChange={e => setGoalType(e.target.value)}>
+          <select className="form-select" value={goalType} onChange={e => setGoalType(e.target.value)}>
             <option value="savings">Savings</option>
             <option value="growth">Growth</option>
             <option value="speculation">Speculation</option>

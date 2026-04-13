@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
 import api from '../api/client';
 
-export default function PlaidLink({ onSuccess }) {
+export default function PlaidLink({ onSuccess, label }) {
   const [linkToken, setLinkToken] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,7 @@ export default function PlaidLink({ onSuccess }) {
       disabled={!ready || loading}
       className="plaid-link-btn"
     >
-      {loading ? 'Connecting…' : 'Connect Bank Account'}
+      {loading ? 'Connecting…' : (label || 'Connect Bank Account')}
     </button>
   );
 }

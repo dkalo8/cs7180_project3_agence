@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import AppNav from '../components/AppNav';
+import PlaidLink from '../components/PlaidLink';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/client';
 import { getAccounts, getHousehold, getProfile, invalidate } from '../api/apiCache';
@@ -21,6 +22,11 @@ export default function Settings() {
   const [savingRisk, setSavingRisk] = useState(false);
   const [riskMsg, setRiskMsg] = useState('');
 
+  // Active view: personal | household
+  const [activeView, setActiveView] = useState('personal');
+  const [savingView, setSavingView] = useState(false);
+  const [viewMsg, setViewMsg] = useState('');
+
   // Active account
   const [activeAccountId, setActiveAccountId] = useState(null);
   const [savingAccount, setSavingAccount] = useState(false);
@@ -38,6 +44,7 @@ export default function Settings() {
         setProfile(data);
         if (data?.riskTolerance) setRiskTolerance(data.riskTolerance);
         setActiveAccountId(data?.activeAccountId || null);
+        if (data?.activeView) setActiveView(data.activeView);
       }).catch(() => {}),
       getAccounts().then(accounts => setAccounts(accounts)).catch(() => {}),
       getHousehold().then(household => setHousehold(household)).catch(() => {}),
@@ -56,6 +63,22 @@ export default function Settings() {
       setRiskMsg('Failed to save');
     } finally {
       setSavingRisk(false);
+    }
+  }
+
+  async function handleSaveView(view) {
+    setSavingView(true);
+    setViewMsg('');
+    try {
+      await api.patch('/auth/me', { activeView: view });
+      setActiveView(view);
+      invalidate('profile');
+      setViewMsg('Saved');
+      setTimeout(() => setViewMsg(''), 2500);
+    } catch {
+      setViewMsg('Failed to save');
+    } finally {
+      setSavingView(false);
     }
   }
 
@@ -219,6 +242,34 @@ export default function Settings() {
         <section className="expenses-section" style={{ marginBottom: '1.5rem' }}>
           <h3 className="dash-section-title">Household</h3>
 
+          {household && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>View:</span>
+              {['personal', 'household'].map(v => (
+                <button
+                  key={v}
+                  onClick={() => handleSaveView(v)}
+                  disabled={savingView}
+                  style={{
+                    padding: '0.35rem 0.9rem',
+                    borderRadius: 'var(--radius-sm)',
+                    border: `1.5px solid ${activeView === v ? 'var(--navy-600)' : 'var(--navy-200)'}`,
+                    background: activeView === v ? 'var(--navy-800)' : 'var(--bg-surface)',
+                    color: activeView === v ? '#fff' : 'var(--text-main)',
+                    fontWeight: activeView === v ? 600 : 400,
+                    fontSize: '0.85rem',
+                    textTransform: 'capitalize',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  {v}
+                </button>
+              ))}
+              {viewMsg && <span style={{ fontSize: '0.8rem', color: viewMsg === 'Saved' ? 'var(--gain)' : 'var(--loss)' }}>{viewMsg}</span>}
+            </div>
+          )}
+
           {!loading && !household && (
             <div>
               <p className="muted" style={{ marginBottom: '0.75rem' }}>
@@ -358,6 +409,12 @@ export default function Settings() {
               {accountMsg && <p style={{ marginTop: '0.4rem', fontSize: '0.85rem', color: 'var(--gain)' }}>{accountMsg}</p>}
             </>
           )}
+          <div style={{ marginTop: accounts.length > 0 ? '1rem' : 0 }}>
+            <PlaidLink
+              onSuccess={() => { invalidate('accounts'); getAccounts().then(setAccounts).catch(() => {}); }}
+              label={accounts.length > 0 ? 'Connect another bank' : 'Connect a bank account'}
+            />
+          </div>
         </section>
 
         {/* Sign out */}

@@ -61,6 +61,8 @@ async function runMigrations() {
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS risk_tolerance VARCHAR(20) DEFAULT 'moderate'`);
     // Active account column (idempotent)
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS active_account_id UUID REFERENCES accounts(id) ON DELETE SET NULL`).catch(() => {});
+    // Active view column: 'personal' | 'household' (idempotent)
+    await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS active_view VARCHAR(20) DEFAULT 'personal'`).catch(() => {});
     console.log('[migrate] schema up to date'); // eslint-disable-line no-console
   } finally {
     await pool.end();

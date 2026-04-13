@@ -45,6 +45,7 @@ export default function Dashboard() {
   const [insightsLoading, setInsightsLoading] = useState(true);
   const [topGoal, setTopGoal] = useState(null);
   const [household, setHousehold] = useState(null);
+  const [activeView, setActiveView] = useState('personal');
   const [loading, setLoading] = useState(true);
 
   // Load portfolio + accounts in parallel on mount
@@ -54,12 +55,14 @@ export default function Dashboard() {
       getAccounts().catch(() => null),
       getGoals().catch(() => null),
       getHousehold().catch(() => null),
-    ]).then(([portfolioData, accounts, goals, household]) => {
+      getProfile().catch(() => null),
+    ]).then(([portfolioData, accounts, goals, household, profile]) => {
       if (portfolioData) setPortfolio(portfolioData);
       if (accounts?.length > 0) setBankConnected(true);
       const active = (goals || []).filter(g => parseFloat(g.current) < parseFloat(g.target));
       if (active.length > 0) setTopGoal(active[0]);
       if (household) setHousehold(household);
+      if (profile?.activeView) setActiveView(profile.activeView);
       setLoading(false);
     });
 
@@ -119,7 +122,7 @@ export default function Dashboard() {
           <section className="dash-hero">
             <div className="dash-hero-label">
               Investment Portfolio
-              {household && (
+              {household && activeView === 'household' && (
                 <span style={{ marginLeft: '0.6rem', fontSize: '0.75rem', background: '#1e3a5f', color: '#93c5fd', borderRadius: 999, padding: '0.15rem 0.6rem', fontWeight: 600 }}>
                   Household: {household.name}
                 </span>

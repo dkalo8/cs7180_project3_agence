@@ -29,10 +29,20 @@ async function getUserByEmail(email) {
 
 async function getUserById(id) {
   const { rows } = await pool.query(
-    'SELECT id, email, created_at, risk_tolerance, active_account_id, google_id IS NOT NULL AS has_google_auth FROM users WHERE id = $1',
+    `SELECT id, email, created_at, risk_tolerance, active_account_id,
+            COALESCE(active_view, 'personal') AS active_view,
+            google_id IS NOT NULL AS has_google_auth
+     FROM users WHERE id = $1`,
     [id]
   );
   return rows[0] ?? null;
+}
+
+async function updateActiveView(userId, view) {
+  await pool.query(
+    `UPDATE users SET active_view = $2 WHERE id = $1`,
+    [userId, view]
+  );
 }
 
 async function updateRiskTolerance(userId, riskTolerance) {
@@ -310,6 +320,7 @@ module.exports = {
   updatePasswordHash,
   updateRiskTolerance,
   updateActiveAccount,
+  updateActiveView,
   createAccount,
   getAccountsByUserId,
   upsertTransactions,

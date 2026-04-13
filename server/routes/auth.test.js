@@ -263,6 +263,24 @@ describe('PATCH /api/v1/auth/me', () => {
       .send({});
     expect(res.status).toBe(400);
   });
+
+  test('returns 200 and updates activeView to household', async () => {
+    queries.updateActiveView = jest.fn().mockResolvedValue();
+    const res = await request(app)
+      .patch('/api/v1/auth/me')
+      .set('Authorization', `Bearer ${validToken}`)
+      .send({ activeView: 'household' });
+    expect(res.status).toBe(200);
+    expect(queries.updateActiveView).toHaveBeenCalledWith('uuid-1', 'household');
+  });
+
+  test('returns 400 for invalid activeView', async () => {
+    const res = await request(app)
+      .patch('/api/v1/auth/me')
+      .set('Authorization', `Bearer ${validToken}`)
+      .send({ activeView: 'shared' });
+    expect(res.status).toBe(400);
+  });
 });
 
 // ---------------------------------------------------------------------------

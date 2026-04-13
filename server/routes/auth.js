@@ -198,6 +198,7 @@ router.get('/me', authMiddleware, async (req, res, next) => {
       hasGoogleAuth: user.has_google_auth,
       riskTolerance: user.risk_tolerance || 'moderate',
       activeAccountId: user.active_account_id || null,
+      activeView: user.active_view || 'personal',
     });
   } catch (err) {
     next(err);
@@ -205,22 +206,28 @@ router.get('/me', authMiddleware, async (req, res, next) => {
 });
 
 const VALID_RISK_LEVELS = new Set(['conservative', 'moderate', 'aggressive']);
+const VALID_VIEWS = new Set(['personal', 'household']);
 
 // PATCH /api/v1/auth/me
 router.patch('/me', authMiddleware, async (req, res, next) => {
-  const { riskTolerance, activeAccountId } = req.body;
+  const { riskTolerance, activeAccountId, activeView } = req.body;
   const hasRisk = riskTolerance !== undefined;
   const hasAccount = 'activeAccountId' in req.body;
+  const hasView = activeView !== undefined;
 
-  if (!hasRisk && !hasAccount) {
+  if (!hasRisk && !hasAccount && !hasView) {
     return res.status(400).json({ error: 'nothing to update' });
   }
   if (hasRisk && !VALID_RISK_LEVELS.has(riskTolerance)) {
     return res.status(400).json({ error: 'riskTolerance must be conservative, moderate, or aggressive' });
   }
+  if (hasView && !VALID_VIEWS.has(activeView)) {
+    return res.status(400).json({ error: 'activeView must be personal or household' });
+  }
   try {
     if (hasRisk) await queries.updateRiskTolerance(req.userId, riskTolerance);
     if (hasAccount) await queries.updateActiveAccount(req.userId, activeAccountId ?? null);
+    if (hasView) await queries.updateActiveView(req.userId, activeView);
     return res.status(200).json({ ok: true });
   } catch (err) {
     next(err);
