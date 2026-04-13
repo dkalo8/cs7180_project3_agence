@@ -166,7 +166,7 @@ export default function Watchlist() {
                       <h4 className="news-ticker-label">{ticker}</h4>
                       {summary && (
                         <p className="news-summary">
-                          <span className="news-summary-label">AI Overview</span>{summary}
+                          <span className="news-summary-label">Agence Overview</span>{summary}
                         </p>
                       )}
                       <ul className="news-list">

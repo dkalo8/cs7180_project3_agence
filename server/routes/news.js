@@ -17,14 +17,17 @@ async function summarizeTicker(ticker, articles) {
   if (!client || articles.length === 0) return null;
   try {
     const content = articles
-      .map((a, i) => `${i + 1}. ${a.headline}${a.summary ? ` — ${a.summary}` : ''}`)
-      .join('\n');
+      .map((a, i) => {
+        const body = a.summary && a.summary.length > 20 ? `\n   ${a.summary}` : '';
+        return `${i + 1}. ${a.headline}${body}`;
+      })
+      .join('\n\n');
     const msg = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 120,
+      max_tokens: 150,
       messages: [{
         role: 'user',
-        content: `Summarize the key financial news for ${ticker} in 1-2 sentences:\n${content}\n\nRespond with ONLY the summary. No preamble.`,
+        content: `You are a financial analyst. Based on these recent news articles for ${ticker}, write 1-2 sentences of analytical insight — what is driving the stock right now and what should an investor pay attention to. Be specific; do not simply restate the headlines.\n\nArticles:\n${content}\n\nRespond with ONLY the insight. No preamble.`,
       }],
     });
     return msg.content[0]?.text?.trim() || null;
