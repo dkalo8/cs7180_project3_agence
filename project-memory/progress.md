@@ -166,4 +166,6 @@ _Last updated: 2026-04-10_
 - UX polish: "Sign-in: Google/Email" row in Account profile; Sign out removed from nav (Account page only); `invalidateAll()` on logout fixes cross-account cache bleed.
 - E2E CI fix ✅ — added Render warm-up step to ci.yml (polls /health up to 3 min before Playwright runs); fixes cold-start timeout failures.
 - Password reset added to TODO as 9F.
-- **Next: 9D Watchlist News Feed**
+- 9D Watchlist News Feed ✅ — `GET /api/v1/news?tickers=...` (Finnhub, Promise.all per ticker); collapsible "Recent News" section in Watchlist.js; `getNews(tickers)` in apiCache.js with 2-min TTL. 214/214 tests.
+- Bug fixes: watchlist cache invalidation on add/remove (missing invalidate() calls); re-fetch full list after add (for Alpaca prices); finnhub v2 SDK fix (ApiClient.instance removed, now `new DefaultApi(key)`).
+- **Next: 9E Nav Redesign (dropdowns)**

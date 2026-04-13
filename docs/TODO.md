@@ -23,17 +23,10 @@
 - [x] **Frontend** — collapsible "Recent News" section at bottom of `Watchlist.js`; 5 articles per ticker; links open in new tab; loads after watchlist fetch
 - [x] **Cache** — `getNews(tickers)` in `apiCache.js` with 2-min TTL; cache key includes ticker list
 
-### 3. 9E: Nav Redesign (dropdown grouping)
-> Collapse 7 flat nav items into grouped dropdowns for a cleaner, more scalable nav.
-
-- [ ] **Structure:**
-  - Logo → `/` (Dashboard)
-  - **Insights** (top-level, flagship)
-  - **Money** dropdown → Expenses, Goals
-  - **Markets** dropdown → Portfolio, Watchlist, News
-  - **Account** → Settings (no dropdown needed)
-- [ ] **Implementation** — CSS-only hover dropdowns or lightweight React state; mobile-friendly
-- [ ] **Tests** — update any nav-dependent E2E selectors in Playwright
+### 3. 9E: Nav Redesign (dropdown grouping) ✅
+- [x] Logo → `/`, Insights (top-level), Money▾ (Expenses, Goals), Markets▾ (Portfolio, Watchlist), Account
+- [x] CSS-only hover dropdowns with opacity/visibility transition and invisible bridge padding
+- [x] E2E selectors unchanged — tests only reference `.nav` and `link[Insights]`
 
 ### 4. 9F: Password Reset
 > Allow users to reset their password via email link.
