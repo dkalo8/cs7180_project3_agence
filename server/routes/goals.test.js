@@ -122,3 +122,41 @@ describe('POST /api/v1/goals', () => {
     expect(res.status).toBe(400);
   });
 });
+
+// ---------------------------------------------------------------------------
+// PATCH /api/v1/goals/reorder
+// ---------------------------------------------------------------------------
+describe('PATCH /api/v1/goals/reorder', () => {
+  test('returns 401 without a token', async () => {
+    const res = await request(app).patch('/api/v1/goals/reorder');
+    expect(res.status).toBe(401);
+  });
+
+  test('returns 400 when order array is missing', async () => {
+    const res = await request(app)
+      .patch('/api/v1/goals/reorder')
+      .set('Authorization', `Bearer ${validToken}`)
+      .send({});
+    expect(res.status).toBe(400);
+  });
+
+  test('returns 400 when order array is not an array', async () => {
+    const res = await request(app)
+      .patch('/api/v1/goals/reorder')
+      .set('Authorization', `Bearer ${validToken}`)
+      .send({ order: 'not-an-array' });
+    expect(res.status).toBe(400);
+  });
+
+  test('returns 200 and calls reorderGoals', async () => {
+    queries.reorderGoals = jest.fn().mockResolvedValue();
+
+    const res = await request(app)
+      .patch('/api/v1/goals/reorder')
+      .set('Authorization', `Bearer ${validToken}`)
+      .send({ order: ['g1', 'g2', 'g3'] });
+
+    expect(res.status).toBe(200);
+    expect(queries.reorderGoals).toHaveBeenCalledWith('uuid-1', ['g1', 'g2', 'g3']);
+  });
+});

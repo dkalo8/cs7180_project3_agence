@@ -55,6 +55,8 @@ async function runMigrations() {
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) UNIQUE`);
     // Goal type column (idempotent)
     await pool.query(`ALTER TABLE goals ADD COLUMN IF NOT EXISTS goal_type VARCHAR(20) DEFAULT 'savings'`);
+    // Goal position column (idempotent)
+    await pool.query(`ALTER TABLE goals ADD COLUMN IF NOT EXISTS position INTEGER DEFAULT 0`);
     console.log('[migrate] schema up to date'); // eslint-disable-line no-console
   } finally {
     await pool.end();

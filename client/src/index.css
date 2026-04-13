@@ -1059,6 +1059,17 @@ input, button, textarea, select {
   letter-spacing: 0.05em;
 }
 
+/* Goal drag-and-drop */
+.goal-draggable {
+  cursor: grab;
+  user-select: none;
+}
+.goal-draggable:active { cursor: grabbing; }
+.goal-drag-over {
+  border-color: var(--navy-400) !important;
+  box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.25);
+}
+
 /* Goal type badges */
 .goal-type-badge {
   display: inline-block;

@@ -117,10 +117,19 @@ async function createGoal(userId, name, target, monthlyContribution, goalType = 
 async function getGoalsByUserId(userIds) {
   const ids = Array.isArray(userIds) ? userIds : [userIds];
   const { rows } = await pool.query(
-    'SELECT * FROM goals WHERE user_id = ANY($1::uuid[]) ORDER BY created_at ASC',
+    'SELECT * FROM goals WHERE user_id = ANY($1::uuid[]) ORDER BY position ASC, created_at ASC',
     [ids]
   );
   return rows;
+}
+
+async function reorderGoals(userId, orderedIds) {
+  for (let i = 0; i < orderedIds.length; i++) {
+    await pool.query(
+      'UPDATE goals SET position = $1 WHERE id = $2 AND user_id = $3',
+      [i, orderedIds[i], userId]
+    );
+  }
 }
 
 async function updateGoalCurrent(goalId, current) {
@@ -286,6 +295,7 @@ module.exports = {
   createGoal,
   getGoalsByUserId,
   updateGoalCurrent,
+  reorderGoals,
   createTrade,
   getTradesByUserId,
   addToWatchlist,

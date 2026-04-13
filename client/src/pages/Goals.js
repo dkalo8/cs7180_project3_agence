@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import api from '../api/client';
 import { getGoals, invalidate } from '../api/apiCache';
 import AppNav from '../components/AppNav';
@@ -15,6 +15,10 @@ export default function Goals() {
   const [goalType, setGoalType] = useState('savings');
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
+
+  // Drag-and-drop state
+  const dragIndex = useRef(null);
+  const [dragOver, setDragOver] = useState(null);
 
   function fetchGoals() {
     return getGoals()
@@ -60,6 +64,27 @@ export default function Goals() {
     if (remaining <= 0) return 'Complete';
     const months = Math.ceil(remaining / goal.monthly_contribution);
     return `~${months} month${months !== 1 ? 's' : ''} to go`;
+  }
+
+  function handleDragStart(index) {
+    dragIndex.current = index;
+  }
+
+  function handleDragEnter(index) {
+    setDragOver(index);
+  }
+
+  function handleDragEnd() {
+    const from = dragIndex.current;
+    const to = dragOver;
+    dragIndex.current = null;
+    setDragOver(null);
+    if (from === null || to === null || from === to) return;
+    const reordered = [...goals];
+    const [moved] = reordered.splice(from, 1);
+    reordered.splice(to, 0, moved);
+    setGoals(reordered);
+    api.patch('/goals/reorder', { order: reordered.map(g => g.id) }).catch(() => {});
   }
 
   return (
@@ -108,12 +133,21 @@ export default function Goals() {
 
         {goals.length > 0 && (
           <ul className="insight-list">
-            {goals.map(goal => {
+            {goals.map((goal, index) => {
               const current = goal.current || 0;
               const pct = Math.min(100, Math.round((current / goal.target) * 100));
               const pace = paceLabel(goal);
               return (
-                <li key={goal.id} className="insight-card" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+                <li
+                  key={goal.id}
+                  className={`insight-card goal-draggable${dragOver === index ? ' goal-drag-over' : ''}`}
+                  style={{ flexDirection: 'column', alignItems: 'stretch' }}
+                  draggable
+                  onDragStart={() => handleDragStart(index)}
+                  onDragEnter={() => handleDragEnter(index)}
+                  onDragOver={e => e.preventDefault()}
+                  onDragEnd={handleDragEnd}
+                >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <strong>{goal.name}</strong>

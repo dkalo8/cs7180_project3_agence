@@ -37,8 +37,8 @@
 ### 5. Polish backlog (in priority order)
 - [x] **Responsive CSS** — mobile breakpoints across all pages (highest visibility, affects every page)
 - [x] **Dashboard balance wiring** — after buying stock, dashboard should reflect updated equity, positions, and sparkline
-- [ ] **Goal types** — add `goal_type` column (savings/growth/speculation); display type badge
-- [ ] **Drag-and-drop goal ordering** — let user set goal priority via drag-and-drop on Goals page
+- [x] **Goal types** — add `goal_type` column (savings/growth/speculation); display type badge
+- [x] **Drag-and-drop goal ordering** — let user set goal priority via drag-and-drop on Goals page
 - [ ] **Investor risk profile** — settings field for risk tolerance (conservative/moderate/aggressive); feed into autopilot agent rules
 - [ ] **Account selection** — if user has multiple Plaid or trading accounts, allow switching active account
 

@@ -35,4 +35,18 @@ router.post('/', authMiddleware, async (req, res, next) => {
   }
 });
 
+// PATCH /api/v1/goals/reorder
+router.patch('/reorder', authMiddleware, async (req, res, next) => {
+  const { order } = req.body;
+  if (!order || !Array.isArray(order)) {
+    return res.status(400).json({ error: 'order must be an array of goal IDs' });
+  }
+  try {
+    await queries.reorderGoals(req.userId, order);
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;
