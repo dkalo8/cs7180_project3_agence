@@ -1,9 +1,6 @@
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 
-export default function AppNav({ title }) {
-  const { logout } = useAuth();
-
+export default function AppNav() {
   return (
     <header className="nav">
       <Link to="/">Agence</Link>
@@ -14,7 +11,6 @@ export default function AppNav({ title }) {
         <Link to="/goals">Goals</Link>
         <Link to="/portfolio">Portfolio</Link>
         <Link to="/settings">Account</Link>
-        <button onClick={logout}>Sign out</button>
       </nav>
     </header>
   );

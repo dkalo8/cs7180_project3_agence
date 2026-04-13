@@ -116,6 +116,10 @@ export default function Settings() {
                   <td style={{ color: 'var(--text-muted)' }}>Member since</td>
                   <td>{String(profile.createdAt).slice(0, 10)}</td>
                 </tr>
+                <tr>
+                  <td style={{ color: 'var(--text-muted)' }}>Sign-in</td>
+                  <td>{profile.hasGoogleAuth ? 'Google' : 'Email / password'}</td>
+                </tr>
               </tbody>
             </table>
           </section>

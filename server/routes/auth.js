@@ -108,7 +108,7 @@ router.get('/me', authMiddleware, async (req, res, next) => {
   try {
     const user = await queries.getUserById(req.userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
-    return res.status(200).json({ id: user.id, email: user.email, createdAt: user.created_at });
+    return res.status(200).json({ id: user.id, email: user.email, createdAt: user.created_at, hasGoogleAuth: user.has_google_auth });
   } catch (err) {
     next(err);
   }

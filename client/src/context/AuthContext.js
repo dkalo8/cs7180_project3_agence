@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from 'react';
+import { invalidateAll } from '../api/apiCache';
 
 const AuthContext = createContext(null);
 
@@ -12,6 +13,7 @@ export function AuthProvider({ children }) {
 
   function logout() {
     localStorage.removeItem('token');
+    invalidateAll();
     setToken(null);
   }
 

@@ -29,7 +29,7 @@ async function getUserByEmail(email) {
 
 async function getUserById(id) {
   const { rows } = await pool.query(
-    'SELECT id, email, created_at FROM users WHERE id = $1',
+    'SELECT id, email, created_at, google_id IS NOT NULL AS has_google_auth FROM users WHERE id = $1',
     [id]
   );
   return rows[0] ?? null;
