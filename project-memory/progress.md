@@ -177,6 +177,18 @@ _Last updated: 2026-04-10_
 - Google button width warning fixed ✅ — `width={340}` (numeric) on GoogleLogin in Login.js + Register.js.
 - **Next: Polish backlog (responsive CSS, news article count + AI summary, drag-drop goals)**
 
+**Session 2026-04-13 (continued — step 5 polish):**
+- Goal types ✅ — `goal_type` column (savings/growth/speculation); badge in Goals.js; `.form-select` opt-in class for styled selects. 226 tests.
+- Drag-and-drop goal ordering ✅ — `position` column; `PATCH /goals/reorder`; HTML5 drag API in Goals.js; optimistic reorder; `invalidate('goals')` on end. Bug fixes: missing invalidate (stale cache on reload), goalsAgent snake_case (`monthly_contribution` vs `monthlyContribution`), Postgres numeric string → `Number()`.
+- Watchlist insight filtering ✅ — removed `watchlist_quote` catch-all; added positive-sentiment `watchlist_sentiment` (score > 0.7, severity info).
+- Watchlist deep-link ✅ — Insights navigates `?ticker=X`; Watchlist reads URL param, scrolls + highlights matched row.
+- Investor risk profile ✅ — `risk_tolerance` in DB; `PATCH /me` validates; autopilotAgent `RISK_THRESHOLDS` per level.
+- Account selection ✅ — `active_account_id` in DB; Settings page account table + "Clear" link; PlaidLink on Settings; transactions + insights filter by active account.
+- Household activeView toggle ✅ — `active_view` in DB (`personal`|`household`); `PATCH /me` validates; Settings toggle; Dashboard badge conditional on `activeView === 'household'`.
+- Portfolio dropdowns fixed ✅ — `.form-select` opt-in class (was `.page main select`); Portfolio selects now use `className="form-select"`.
+- `queries.test.js` regex fixed — `SELECT[\s\S]*FROM users` for multiline SQL.
+- **244/244 tests passing. Next: About page.**
+
 **Session 2026-04-13 (continued — news/watchlist polish):**
 - News: 7 articles/ticker fetched, 3 shown by default + per-ticker expand button. 225/225 tests.
 - Agence Overview: improved prompt uses full article body + analyst framing ("what's driving the stock").

@@ -3,6 +3,9 @@
 Parallel agents analyze spending, anomalies, savings goals, portfolio health, and market context. LLM-as-judge synthesizes prioritized insights. Supports autopilot paper trading.
 See @docs/PRD.md for full product context.
 
+## Communication Style
+Terse responses. Fragments OK. No filler, no preamble, no "certainly" or "I'd be happy to." Just the answer.
+
 ## Tech Stack
 - Frontend: React (client/)
 - Backend: Node.js + Express (server/)

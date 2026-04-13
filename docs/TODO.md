@@ -40,9 +40,12 @@
 - [x] **Goal types** — add `goal_type` column (savings/growth/speculation); display type badge
 - [x] **Drag-and-drop goal ordering** — let user set goal priority via drag-and-drop on Goals page
 - [x] **Investor risk profile** — settings field for risk tolerance (conservative/moderate/aggressive); feed into autopilot agent rules
-- [ ] **Account selection** — if user has multiple Plaid or trading accounts, allow switching active account
-- [ ] **Household badge visibility** — "Household: X" badge on Dashboard should only show when household account is the active selected account (follow-up to Account Selection)
-- [ ] **About page** — user-friendly page explaining the app, multi-agent architecture, Agents + Finance = Agence vision, how each agent differentiates the platform, how to navigate the app (Question: Should it be to the left of Insights, to the right of Agence, or where would you suggest it lives?)
+- [x] **Account selection** — multiple Plaid accounts supported; active account filter persisted in DB; Settings page lets user select/clear active account; PlaidLink on Settings to add more accounts
+- [x] **Watchlist insight filtering** — removed noisy catch-all `watchlist_quote`; added positive-sentiment `watchlist_sentiment` (info); price-move severity tiers (≥8% high, ≥3% medium)
+- [x] **Watchlist deep-link from Insights** — clicking watchlist insight navigates to `/watchlist?ticker=X`; Watchlist scrolls to + highlights the row
+- [x] **Household badge visibility + view toggle** — `active_view` persisted in DB (`personal`|`household`); Settings toggle; Dashboard badge only shows when `activeView === 'household'`
+- [x] **Portfolio dropdown arrows** — Portfolio selects now use `.form-select` opt-in class (consistent chevron, no padding-right conflict)
+- [ ] **About page** ← **NEXT** — user-friendly page explaining the app, multi-agent architecture, Agents + Finance = Agence vision, how each agent differentiates the platform, how to navigate the app. Lives in nav (suggest: top-level link next to Insights, or under a "?" icon).
 
 ### 5. Phase 10: Documentation & Demo (deadline-sensitive)
 - [ ] **Add Plaid sandbox instructions to README.md** — graders need: how to link an account, sandbox credentials, what to expect after linking

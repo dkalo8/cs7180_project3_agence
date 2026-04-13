@@ -228,7 +228,7 @@ export default function Portfolio() {
           <select
             value={action}
             onChange={e => setAction(e.target.value)}
-            style={{ padding: '0.6rem 0.8rem', border: '1px solid #cbd5e1', borderRadius: 8, fontSize: '0.9rem' }}
+            className="form-select"
           >
             <option value="buy">Buy</option>
             <option value="sell">Sell</option>
@@ -244,7 +244,7 @@ export default function Portfolio() {
           <select
             value={orderType}
             onChange={e => setOrderType(e.target.value)}
-            style={{ padding: '0.6rem 0.8rem', border: '1px solid #cbd5e1', borderRadius: 8, fontSize: '0.9rem' }}
+            className="form-select"
           >
             <option value="market">Market</option>
             <option value="limit">Limit</option>
