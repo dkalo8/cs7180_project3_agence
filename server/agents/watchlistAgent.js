@@ -31,13 +31,6 @@ function watchlistAgent(userData, marketData) {
         message: `${ticker} (watchlist) moved ${sign}${quote.changePercent.toFixed(2)}% today — $${quote.price.toFixed(2)}`,
         severity: absPct >= 5 ? 'high' : 'medium',
       });
-    } else {
-      insights.push({
-        type: 'watchlist_quote',
-        ticker,
-        message: `${ticker} (watchlist): $${quote.price.toFixed(2)}, ${sign}${quote.changePercent.toFixed(2)}% today`,
-        severity: 'info',
-      });
     }
 
     const article = news[ticker];
@@ -47,6 +40,13 @@ function watchlistAgent(userData, marketData) {
         ticker,
         message: `Negative sentiment for ${ticker} (watchlist): ${article.headline}`,
         severity: 'medium',
+      });
+    } else if (article && article.sentimentScore > 0.7) {
+      insights.push({
+        type: 'watchlist_sentiment',
+        ticker,
+        message: `Positive sentiment for ${ticker} (watchlist): ${article.headline}`,
+        severity: 'info',
       });
     }
 

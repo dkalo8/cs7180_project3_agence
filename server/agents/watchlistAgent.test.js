@@ -42,10 +42,20 @@ describe('watchlistAgent', () => {
     expect(mover.severity).toBe('high');
   });
 
-  test('small move (< 3%) emits watchlist_quote not watchlist_mover', () => {
+  test('small move (< 3%) emits no price insight', () => {
     const result = watchlistAgent(makeUserData(['TSLA']), makeMarketData());
-    expect(result.some(i => i.type === 'watchlist_quote' && i.ticker === 'TSLA')).toBe(true);
+    expect(result.some(i => i.type === 'watchlist_quote' && i.ticker === 'TSLA')).toBe(false);
     expect(result.some(i => i.type === 'watchlist_mover' && i.ticker === 'TSLA')).toBe(false);
+  });
+
+  test('positive sentiment (> 0.7) emits watchlist_sentiment info insight', () => {
+    const data = makeMarketData({
+      news: { AAPL: { headline: 'Apple beats earnings', sentimentScore: 0.85 } },
+    });
+    const result = watchlistAgent(makeUserData(['AAPL']), data);
+    const sentiment = result.find(i => i.type === 'watchlist_sentiment' && i.ticker === 'AAPL');
+    expect(sentiment).toBeDefined();
+    expect(sentiment.severity).toBe('info');
   });
 
   test('negative sentiment ticker emits watchlist_sentiment insight', () => {
