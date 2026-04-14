@@ -108,6 +108,25 @@ describe('anomalyAgent — cycle 4: core logic', () => {
     expect(dup.date).toBe('2026-03-15');
   });
 
+  test('repeated_charge insight includes merchant and amount fields for multi-row routing', () => {
+    const userData = {
+      transactions: [
+        { id: 'tx1', amount: 6.33, merchant_name: 'Uber', category: 'Transport', date: '2026-03-28' },
+        { id: 'tx2', amount: 6.33, merchant_name: 'Uber', category: 'Transport', date: '2026-02-26' },
+        { id: 'tx3', amount: 6.33, merchant_name: 'Uber', category: 'Transport', date: '2026-01-15' },
+      ],
+      balances: [],
+      goals: [],
+    };
+    const result = anomalyAgent(userData);
+    const repeated = result.find(i => i.type === 'repeated_charge');
+    expect(repeated).toBeDefined();
+    expect(repeated.merchant).toBe('Uber');
+    expect(repeated.amount).toBe(6.33);
+    expect(typeof repeated.merchant).toBe('string');
+    expect(typeof repeated.amount).toBe('number');
+  });
+
   test('does not flag a duplicate when same merchant appears on different days', () => {
     const userData = {
       transactions: [

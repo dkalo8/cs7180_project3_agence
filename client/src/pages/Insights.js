@@ -56,6 +56,8 @@ export default function Insights() {
             const base = SOURCE_ROUTE[insight.source] || null;
             const route = base && insight.type === 'duplicate_charge' && insight.amount != null && insight.date
               ? `${base}?amount=${insight.amount}&date=${String(insight.date).slice(0, 10)}`
+              : base && insight.type === 'repeated_charge' && insight.amount != null && insight.merchant
+                ? `${base}?merchant=${encodeURIComponent(insight.merchant)}&amount=${insight.amount}`
               : base && insight.txId
                 ? `${base}?txId=${insight.txId}`
                 : base && insight.amount != null

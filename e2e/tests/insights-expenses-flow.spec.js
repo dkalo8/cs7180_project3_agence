@@ -155,6 +155,40 @@ test.describe('Expenses deep-link highlighting', () => {
     await expect(highlighted.first()).toBeAttached({ timeout: 8000 });
   });
 
+  test('repeated_charge insight routes to ?merchant=&amount= and highlights 2+ rows', async ({ page }) => {
+    await page.goto('/insights');
+    await page.evaluate(() => sessionStorage.removeItem('agence_insights'));
+    await page.reload();
+    await page.waitForSelector('.insight-list', { timeout: 30000 });
+
+    const cards = page.locator('.insight-card');
+    const count = await cards.count();
+
+    let repCard = null;
+    for (let i = 0; i < count; i++) {
+      const text = await cards.nth(i).textContent();
+      if (text?.toLowerCase().includes('identical') && text?.toLowerCase().includes('recurring')) {
+        repCard = cards.nth(i);
+        break;
+      }
+    }
+
+    if (!repCard) {
+      test.skip(true, 'No repeated_charge insight in sandbox data');
+      return;
+    }
+
+    await repCard.click();
+    await page.waitForURL(/\/expenses/, { timeout: 10000 });
+
+    const url = page.url();
+    expect(url).toMatch(/merchant=/);
+    expect(url).toMatch(/amount=/);
+
+    const hlCount = await page.locator('tr.tx-highlight').count();
+    expect(hlCount).toBeGreaterThanOrEqual(2);
+  });
+
   test('duplicate_charge insight routes to ?amount=&date= and highlights 2+ rows', async ({ page }) => {
     await page.goto('/insights');
     await page.evaluate(() => sessionStorage.removeItem('agence_insights'));
