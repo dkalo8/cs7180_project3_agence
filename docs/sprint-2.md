@@ -1,6 +1,6 @@
 # Sprint 2 — Planning & Retrospective
 
-**Dates:** 2026-04-06 – 2026-04-06  
+**Dates:** 2026-04-06 – 2026-04-08  
 **Goal:** Claude Code features, CI/CD pipeline, production deployment, full testing coverage.
 
 ---
@@ -23,6 +23,16 @@
 - Live URLs working end-to-end (register → login → dashboard)
 - 118+ tests passing, 70%+ coverage enforced in CI
 - At least 1 merged PR with AI disclosure
+
+---
+
+## Async Standups (Solo)
+
+**2026-04-06** — Starting sprint. Claude Code features first (hooks, MCP, sub-agent, second skill) — these are the highest-signal rubric items. Will commit each feature independently before moving to CI/CD.
+
+**2026-04-07** — CI/CD pipeline green on first push. Render + Vercel both live. Starting integration tests and Playwright E2E. Need to confirm 70% coverage threshold enforced in CI before closing this out.
+
+**2026-04-08** — All testing stages passing. CSS styling delivered via `feat/css-styling` branch + PR #6 with AI disclosure. Sprint complete — all phases 4–7 done, 118 tests passing, both deployments live.
 
 ---
 

@@ -6,7 +6,7 @@ AI-powered personal finance and investment copilot. Parallel agents analyze spen
 
 - Connects bank accounts via Plaid (transactions, balances)
 - Connects paper trading account via Alpaca (positions, quotes, trade execution)
-- Runs 6 analysis agents in parallel — spending, anomalies, goals, portfolio, market context, autopilot
+- Runs 7 analysis agents in parallel — spending, anomalies, goals, portfolio, market context, autopilot, watchlist
 - Synthesizes insights via `claude-sonnet-4-6` LLM-as-judge with explicit scoring dimensions
 - Supports autopilot paper trading with configurable rules
 
@@ -94,6 +94,7 @@ flowchart TD
             PF["portfolioAgent"]
             MC["marketContextAgent"]
             AP["autopilotAgent"]
+            WA["watchlistAgent"]
             JU["LLM-as-Judge\n(claude-sonnet-4-6)"]
         end
     end
@@ -115,9 +116,9 @@ flowchart TD
     UI -->|axios + Bearer token| Insights
     Auth -->|bcrypt + JWT| PG
     Insights --> JWT --> PA
-    PA --> SA & AN & GA & PF & MC & AP
+    PA --> SA & AN & GA & PF & MC & AP & WA
     SA & AN & GA -->|userData| Plaid
-    PF & MC & AP -->|marketData| Alpaca
+    PF & MC & AP & WA -->|marketData| Alpaca
     MC -->|news| Finnhub
     PA -->|agentOutputs| JU
     JU -->|ranked insights| Claude
@@ -140,9 +141,31 @@ flowchart TD
 | Backend API | https://cs7180-project3-agence.onrender.com |
 | Health check | https://cs7180-project3-agence.onrender.com/health |
 
+## Connecting a Bank Account (Plaid Sandbox)
+
+Agence uses Plaid in sandbox mode — no real bank credentials required.
+
+1. Log in and go to **Account → Settings**
+2. Click **Connect a bank account** — the Plaid Link modal opens
+3. Search for any institution (e.g. "Chase") and select it
+4. Enter the sandbox credentials:
+   - **Username:** `user_good`
+   - **Password:** `pass_good` <!-- pragma: allowlist secret -->
+5. Select any account and complete the flow
+6. Return to Settings — your linked accounts will appear
+7. Optionally select an **active account** to filter transactions and insights to that account only
+
+After linking, go to **Insights** and click **Refresh** to run all 6 agents against your sandbox transactions. The Dashboard will reflect your balances and the AI insight feed will populate within a few seconds.
+
+> Note: Plaid sandbox transactions are pre-populated test data — they won't reflect any real spending.
+
+## Connecting a Paper Trading Account (Alpaca)
+
+Alpaca is connected server-side via environment variables — users do not configure Alpaca credentials. The app always uses Alpaca's paper trading environment (`ALPACA_PAPER=true` is hardcoded). To test portfolio features, place a paper trade on the **Portfolio** page.
+
 ## Status
 
-- **118/118 tests passing** (Jest unit + integration)
+- **246/246 tests passing** (Jest unit + integration)
 - **4/4 E2E tests passing** (Playwright, live Vercel URL)
 - **Coverage**: ~95% statements, 70%+ enforced in CI
 - CI: GitHub Actions (lint → test → coverage → build → security → E2E → AI review)

@@ -25,6 +25,16 @@
 
 ---
 
+## Async Standups (Solo)
+
+**2026-03-28** — Starting sprint. Scaffolding all 6 agent stubs and test files via `/add-agent` skill. Goal: red test suites for all 6 agents before writing any implementation.
+
+**2026-03-31** — All 6 agents green. Starting orchestrator + LLM-as-judge. Biggest risk is the judge prompt — mocking Anthropic in tests and verifying routing logic separately.
+
+**2026-04-05** — Backend routes and auth middleware done. Frontend scaffold (AuthContext, protected routes, Login/Register/Dashboard/Insights) compiling on CRA. Final push: wire frontend to backend and verify end-to-end before sprint close.
+
+---
+
 ## Sprint Retrospective
 
 ### What Was Built
