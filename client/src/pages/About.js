@@ -58,6 +58,14 @@ const NAV_GUIDE = [
 export default function About() {
   return (
     <div className="page">
+      <style>{`
+        @media (max-width: 640px) {
+          .about-step-row { flex-wrap: wrap !important; }
+          .about-step-label { min-width: unset !important; width: 100%; }
+          .about-nav-row { flex-wrap: wrap !important; }
+          .about-nav-label { min-width: unset !important; width: 100%; }
+        }
+      `}</style>
       <AppNav />
       <main style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem 2.5rem 4rem' }}>
 
@@ -109,7 +117,7 @@ export default function About() {
               ['3. LLM-as-judge synthesizes', 'Claude (claude-sonnet-4-6) receives every agent\'s raw output and ranks insights by urgency, impact, and actionability into a single prioritized feed.'],
               ['4. You act', 'Click any insight card to jump directly to the relevant page — the transaction, goal, or position that triggered it.'],
             ].map(([step, desc]) => (
-              <div key={step} style={{
+              <div key={step} className="about-step-row" style={{
                 display: 'flex',
                 gap: '1rem',
                 alignItems: 'flex-start',
@@ -118,7 +126,7 @@ export default function About() {
                 borderRadius: 'var(--radius-md)',
                 padding: '1rem 1.25rem',
               }}>
-                <span style={{
+                <span className="about-step-label" style={{
                   fontFamily: 'var(--font-display)',
                   fontWeight: 700,
                   fontSize: '0.95rem',
@@ -166,7 +174,7 @@ export default function About() {
           <h2 className="section-heading">Navigating the App</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {NAV_GUIDE.map(({ path, desc }) => (
-              <div key={path} style={{
+              <div key={path} className="about-nav-row" style={{
                 display: 'flex',
                 gap: '1rem',
                 alignItems: 'flex-start',
@@ -175,7 +183,7 @@ export default function About() {
                 border: '1px solid var(--navy-200)',
                 borderRadius: 'var(--radius-sm)',
               }}>
-                <code style={{
+                <code className="about-nav-label" style={{
                   fontSize: '0.8rem',
                   background: 'var(--navy-100)',
                   color: 'var(--navy-600)',
