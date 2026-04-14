@@ -19,9 +19,9 @@
 - **Config:** `server/stryker.config.json`
 - **Command:** `npm run mutation`
 - **Report:** `server/reports/mutation/mutation.html`
-- **Score:** ~67% overall (spendingAgent 85.7%, goalsAgent 67.2%, anomalyAgent 50.6%)
-- Targets 3 core agents only; anomalyAgent score lowest due to string-template survivors
-- Re-run needed post-Agent-SDK to get updated score (anomalyAgent improved with abs() fixes)
+- **Score (updated after abs() fixes):** 74.64% overall — spendingAgent 85.71%, anomalyAgent 71.60%, goalsAgent 65.52%
+- anomalyAgent jumped from 50.6% → 71.60% after Math.abs() fixes killed 8 more mutants
+- Targets 3 core agents only; surviving mutants mostly string-template and boundary (> vs >=) variants
 
 ### 3. Agent SDK upgrade — POST /api/v1/chat (+4 bonus pts)
 - **File:** `server/routes/chat.js` (full rewrite)

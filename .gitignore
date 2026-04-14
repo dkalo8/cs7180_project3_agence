@@ -13,7 +13,7 @@ hw4-session-log.md
 hw5.md
 p3.md
 hw5-TODO.md
-/TODO.md
+docs/TODO.md
 hw5-retrospective.md
 screenshots/
 original-proposal.md
@@ -29,3 +29,4 @@ server/.omc/
 docs/blog-post.md
 docs/reflection.md
 server/reports/
+server/.stryker-tmp/
