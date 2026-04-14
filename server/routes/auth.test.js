@@ -55,6 +55,14 @@ describe('POST /api/v1/auth/register', () => {
     expect(res.status).toBe(400);
   });
 
+  test('returns 400 when password is shorter than 8 characters', async () => {
+    const res = await request(app)
+      .post('/api/v1/auth/register')
+      .send({ email: 'a@b.com', password: 'short' }); // pragma: allowlist secret
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/8 characters/i);
+  });
+
   test('returns 409 when email is already registered', async () => {
     queries.getUserByEmail.mockResolvedValue({ id: 'uuid-1', email: 'a@b.com' });
 
@@ -329,6 +337,15 @@ describe('POST /api/v1/auth/reset-password', () => {
   test('returns 400 when password is missing', async () => {
     const res = await request(app).post('/api/v1/auth/reset-password').send({ token: 'abc' });
     expect(res.status).toBe(400);
+  });
+
+  test('returns 400 when new password is shorter than 8 characters', async () => {
+    const token = makeResetToken({ userId: 'uuid-1', email: 'user@test.com', type: 'password-reset' });
+    const res = await request(app)
+      .post('/api/v1/auth/reset-password')
+      .send({ token, password: 'short' }); // pragma: allowlist secret
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/8 characters/i);
   });
 
   test('returns 401 with invalid token', async () => {

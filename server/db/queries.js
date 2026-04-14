@@ -163,10 +163,10 @@ async function reorderGoals(userId, orderedIds) {
   }
 }
 
-async function updateGoalCurrent(goalId, current) {
+async function updateGoalCurrent(userId, goalId, current) {
   const { rows } = await pool.query(
-    'UPDATE goals SET current = $2 WHERE id = $1 RETURNING *',
-    [goalId, current]
+    'UPDATE goals SET current = $2 WHERE id = $1 AND user_id = $3 RETURNING *',
+    [goalId, current, userId]
   );
   return rows[0] ?? null;
 }

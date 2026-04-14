@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../api/client';
 import { getPortfolio, getTradeHistory, invalidate } from '../api/apiCache';
+import { invalidateInsightsCache } from '../api/insightsCache';
 import AppNav from '../components/AppNav';
 
 export default function Portfolio() {
@@ -81,6 +82,7 @@ export default function Portfolio() {
       setStopPrice('');
       invalidate('portfolio');
       invalidate('trades');
+      invalidateInsightsCache();
       setLoading(true);
       await Promise.all([fetchPortfolio(), fetchTrades()]);
     } catch (err) {

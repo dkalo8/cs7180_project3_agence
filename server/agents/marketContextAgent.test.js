@@ -3,46 +3,47 @@ const marketContextAgent = require('./marketContextAgent');
 describe('marketContextAgent', () => {
   describe('Cycle 1 — empty ticker list', () => {
     it('returns empty array when tickers is empty', () => {
-      const result = marketContextAgent({ tickers: [] }, { quotes: {}, news: {} });
+      const result = marketContextAgent({ tickers: [], quotes: {}, news: {} });
       expect(result).toEqual([]);
     });
 
-    it('returns empty array when userData has no tickers key', () => {
-      const result = marketContextAgent({}, { quotes: {}, news: {} });
+    it('returns empty array when marketData has no tickers key', () => {
+      const result = marketContextAgent({ quotes: {}, news: {} });
       expect(result).toEqual([]);
     });
 
-    it('returns empty array when userData is null', () => {
-      const result = marketContextAgent(null, { quotes: {}, news: {} });
+    it('returns empty array when marketData is null', () => {
+      const result = marketContextAgent(null);
       expect(result).toEqual([]);
     });
   });
 
   describe('Cycle 2 — Alpaca failure', () => {
     it('returns empty array when marketData is null', () => {
-      const result = marketContextAgent({ tickers: ['AAPL'] }, null);
+      const result = marketContextAgent(null);
       expect(result).toEqual([]);
     });
 
     it('returns empty array when quotes is null', () => {
-      const result = marketContextAgent({ tickers: ['AAPL'] }, { quotes: null, news: {} });
+      const result = marketContextAgent({ tickers: ['AAPL'], quotes: null, news: {} });
       expect(result).toEqual([]);
     });
 
     it('returns empty array when quotes is missing entirely', () => {
-      const result = marketContextAgent({ tickers: ['AAPL'] }, { news: {} });
+      const result = marketContextAgent({ tickers: ['AAPL'], news: {} });
       expect(result).toEqual([]);
     });
 
     it('does not throw when a specific ticker is missing from quotes', () => {
       expect(() => {
-        marketContextAgent({ tickers: ['AAPL', 'TSLA'] }, { quotes: {}, news: {} });
+        marketContextAgent({ tickers: ['AAPL', 'TSLA'], quotes: {}, news: {} });
       }).not.toThrow();
     });
   });
 
   describe('Cycle 3 — price + 24h change per ticker (Alpaca)', () => {
     const marketData = {
+      tickers: ['AAPL', 'TSLA'],
       quotes: {
         AAPL: { price: 185.50, changePercent: 1.25, name: 'Apple Inc.' },
         TSLA: { price: 250.00, changePercent: -1.96, name: 'Tesla Inc.' },
@@ -51,13 +52,13 @@ describe('marketContextAgent', () => {
     };
 
     it('returns a market_quote insight for each ticker', () => {
-      const results = marketContextAgent({ tickers: ['AAPL', 'TSLA'] }, marketData);
+      const results = marketContextAgent(marketData);
       const quotes = results.filter((i) => i.type === 'market_quote');
       expect(quotes).toHaveLength(2);
     });
 
     it('market_quote insight includes ticker, price, and changePercent in message', () => {
-      const results = marketContextAgent({ tickers: ['AAPL'] }, marketData);
+      const results = marketContextAgent({ ...marketData, tickers: ['AAPL'] });
       const insight = results.find((i) => i.type === 'market_quote' && i.ticker === 'AAPL');
       expect(insight).toBeDefined();
       expect(insight.message).toContain('AAPL');
@@ -66,19 +67,19 @@ describe('marketContextAgent', () => {
     });
 
     it('market_quote insight has severity info for positive change', () => {
-      const results = marketContextAgent({ tickers: ['AAPL'] }, marketData);
+      const results = marketContextAgent({ ...marketData, tickers: ['AAPL'] });
       const insight = results.find((i) => i.type === 'market_quote' && i.ticker === 'AAPL');
       expect(insight.severity).toBe('info');
     });
 
     it('market_quote insight has severity warning for negative change', () => {
-      const results = marketContextAgent({ tickers: ['TSLA'] }, marketData);
+      const results = marketContextAgent({ ...marketData, tickers: ['TSLA'] });
       const insight = results.find((i) => i.type === 'market_quote' && i.ticker === 'TSLA');
       expect(insight.severity).toBe('warning');
     });
 
     it('skips tickers missing from quotes without crashing', () => {
-      const results = marketContextAgent({ tickers: ['AAPL', 'MSFT'] }, marketData);
+      const results = marketContextAgent({ ...marketData, tickers: ['AAPL', 'MSFT'] });
       const quotes = results.filter((i) => i.type === 'market_quote');
       expect(quotes).toHaveLength(1);
       expect(quotes[0].ticker).toBe('AAPL');
@@ -87,6 +88,7 @@ describe('marketContextAgent', () => {
 
   describe('Cycle 4 — news sentiment per ticker (Finnhub)', () => {
     const marketData = {
+      tickers: ['AAPL', 'TSLA'],
       quotes: {
         AAPL: { price: 185.50, changePercent: 1.25, name: 'Apple Inc.' },
         TSLA: { price: 250.00, changePercent: -1.96, name: 'Tesla Inc.' },
@@ -98,13 +100,13 @@ describe('marketContextAgent', () => {
     };
 
     it('returns a market_sentiment insight for each ticker with news', () => {
-      const results = marketContextAgent({ tickers: ['AAPL', 'TSLA'] }, marketData);
+      const results = marketContextAgent(marketData);
       const sentiments = results.filter((i) => i.type === 'market_sentiment');
       expect(sentiments).toHaveLength(2);
     });
 
     it('market_sentiment insight includes ticker and headline in message', () => {
-      const results = marketContextAgent({ tickers: ['AAPL'] }, marketData);
+      const results = marketContextAgent({ ...marketData, tickers: ['AAPL'] });
       const insight = results.find((i) => i.type === 'market_sentiment' && i.ticker === 'AAPL');
       expect(insight).toBeDefined();
       expect(insight.message).toContain('AAPL');
@@ -112,13 +114,13 @@ describe('marketContextAgent', () => {
     });
 
     it('market_sentiment severity is info for positive sentiment (score >= 0.5)', () => {
-      const results = marketContextAgent({ tickers: ['AAPL'] }, marketData);
+      const results = marketContextAgent({ ...marketData, tickers: ['AAPL'] });
       const insight = results.find((i) => i.type === 'market_sentiment' && i.ticker === 'AAPL');
       expect(insight.severity).toBe('info');
     });
 
     it('market_sentiment severity is warning for negative sentiment (score < 0.5)', () => {
-      const results = marketContextAgent({ tickers: ['TSLA'] }, marketData);
+      const results = marketContextAgent({ ...marketData, tickers: ['TSLA'] });
       const insight = results.find((i) => i.type === 'market_sentiment' && i.ticker === 'TSLA');
       expect(insight.severity).toBe('warning');
     });
@@ -126,32 +128,33 @@ describe('marketContextAgent', () => {
 
   describe('Cycle 5 — Finnhub failure is non-critical', () => {
     const quotesOnly = {
+      tickers: ['AAPL'],
       quotes: {
         AAPL: { price: 185.50, changePercent: 1.25, name: 'Apple Inc.' },
       },
     };
 
     it('still returns market_quote insights when news is null', () => {
-      const results = marketContextAgent({ tickers: ['AAPL'] }, { ...quotesOnly, news: null });
+      const results = marketContextAgent({ ...quotesOnly, news: null });
       const quotes = results.filter((i) => i.type === 'market_quote');
       expect(quotes).toHaveLength(1);
     });
 
     it('still returns market_quote insights when news key is absent', () => {
-      const results = marketContextAgent({ tickers: ['AAPL'] }, quotesOnly);
+      const results = marketContextAgent(quotesOnly);
       const quotes = results.filter((i) => i.type === 'market_quote');
       expect(quotes).toHaveLength(1);
     });
 
     it('returns no market_sentiment insights when news is null', () => {
-      const results = marketContextAgent({ tickers: ['AAPL'] }, { ...quotesOnly, news: null });
+      const results = marketContextAgent({ ...quotesOnly, news: null });
       const sentiments = results.filter((i) => i.type === 'market_sentiment');
       expect(sentiments).toHaveLength(0);
     });
 
     it('does not throw when news is null', () => {
       expect(() => {
-        marketContextAgent({ tickers: ['AAPL'] }, { ...quotesOnly, news: null });
+        marketContextAgent({ ...quotesOnly, news: null });
       }).not.toThrow();
     });
   });

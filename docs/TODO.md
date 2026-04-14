@@ -45,7 +45,24 @@
 - [x] **Watchlist deep-link from Insights** — clicking watchlist insight navigates to `/watchlist?ticker=X`; Watchlist scrolls to + highlights the row
 - [x] **Household badge visibility + view toggle** — `active_view` persisted in DB (`personal`|`household`); Settings toggle; Dashboard badge only shows when `activeView === 'household'`
 - [x] **Portfolio dropdown arrows** — Portfolio selects now use `.form-select` opt-in class (consistent chevron, no padding-right conflict)
-- [ ] **About page** ← **NEXT** — user-friendly page explaining the app, multi-agent architecture, Agents + Finance = Agence vision, how each agent differentiates the platform, how to navigate the app. Lives in nav (suggest: top-level link next to Insights, or under a "?" icon).
+
+### 5b. Code Review Fixes ✅
+
+- [x] **Fix 1** — marketContextAgent single-param refactor; 20 tests updated; orchestrator call was already correct
+- [x] **Fix 2** — Orchestrator test: add watchlistAgent mock, `watchlist` in return-shape assertion, data-routing assertion
+- [x] **Fix 3** — `invalidateInsightsCache()` called after mutations in Goals, Portfolio, Watchlist, Settings
+- [x] **Fix 4** — Retry interceptor guards GET/HEAD/OPTIONS only (no more POST retries → no duplicate trades)
+- [x] **Fix 5** — PlaidLink: .then() → async/await with `cancelled` cleanup flag
+- [x] **Fix 6** — Goals reorder: store `previous`, restore on `.catch()` 
+- [x] **Fix 7** — `helmet` installed + `app.use(helmet())` in server/index.js
+- [x] **Fix 8** — Password ≥ 8 chars enforced on register + reset-password; 2 new tests (246 total)
+- [x] **Fix 9** — `updateGoalCurrent(userId, goalId, current)` adds `AND user_id = $3` ownership filter
+- [x] **Fix 10** — axios updated to 1.15.0 in both server/ and client/ (patches CVSS 10.0 SSRF CVE)
+- [x] **Fix 11** — `express-rate-limit`: auth routes 10 req/15 min; insights+chat 60 req/min; skipped in test env
+
+---
+
+- [ ] **About page** — user-friendly page explaining the app, multi-agent architecture, Agents + Finance = Agence vision, how each agent differentiates the platform, how to navigate the app. Lives in nav (suggest: top-level link next to Insights, or under a "?" icon).
 
 ### 5. Phase 10: Documentation & Demo (deadline-sensitive)
 - [ ] **Add Plaid sandbox instructions to README.md** — graders need: how to link an account, sandbox credentials, what to expect after linking

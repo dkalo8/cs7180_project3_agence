@@ -3,12 +3,11 @@
  * Analyzes market data per ticker and returns price + sentiment insights.
  * Quotes sourced from Alpaca; news/sentiment sourced from Finnhub (non-critical).
  *
- * @param {Object} userData   - { tickers: string[] }
- * @param {Object} marketData - { quotes: Object, news: Object }
+ * @param {Object} marketData - { tickers: string[], quotes: Object, news: Object }
  * @returns {Array<{ type: string, ticker: string, message: string, severity: string }>}
  */
-function marketContextAgent(userData, marketData) {
-  const tickers = userData?.tickers;
+function marketContextAgent(marketData) {
+  const tickers = marketData?.tickers;
   if (!tickers || tickers.length === 0) return [];
 
   const quotes = marketData?.quotes;

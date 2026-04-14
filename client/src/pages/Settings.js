@@ -4,6 +4,7 @@ import PlaidLink from '../components/PlaidLink';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/client';
 import { getAccounts, getHousehold, getProfile, invalidate } from '../api/apiCache';
+import { invalidateInsightsCache } from '../api/insightsCache';
 
 export default function Settings() {
   const { logout } = useAuth();
@@ -73,6 +74,7 @@ export default function Settings() {
       await api.patch('/auth/me', { activeView: view });
       setActiveView(view);
       invalidate('profile');
+      invalidateInsightsCache();
       setViewMsg('Saved');
       setTimeout(() => setViewMsg(''), 2500);
     } catch {
@@ -92,6 +94,7 @@ export default function Settings() {
       setActiveAccountId(id);
       invalidate('profile');
       invalidate('transactions');
+      invalidateInsightsCache();
       setAccountMsg(id ? 'Active account set' : 'Cleared — showing all accounts');
       setTimeout(() => setAccountMsg(''), 3000);
     } catch {
@@ -411,7 +414,7 @@ export default function Settings() {
           )}
           <div style={{ marginTop: accounts.length > 0 ? '1rem' : 0 }}>
             <PlaidLink
-              onSuccess={() => { invalidate('accounts'); getAccounts().then(setAccounts).catch(() => {}); }}
+              onSuccess={() => { invalidate('accounts'); invalidateInsightsCache(); getAccounts().then(setAccounts).catch(() => {}); }}
               label={accounts.length > 0 ? 'Connect another bank' : 'Connect a bank account'}
             />
           </div>

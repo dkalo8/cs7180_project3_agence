@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import api from '../api/client';
 import { getGoals, invalidate } from '../api/apiCache';
+import { invalidateInsightsCache } from '../api/insightsCache';
 import AppNav from '../components/AppNav';
 
 export default function Goals() {
@@ -49,6 +50,7 @@ export default function Goals() {
       setMonthlyContribution('');
       setGoalType('savings');
       invalidate('goals');
+      invalidateInsightsCache();
       setLoading(true);
       await fetchGoals();
     } catch {
@@ -80,12 +82,16 @@ export default function Goals() {
     dragIndex.current = null;
     setDragOver(null);
     if (from === null || to === null || from === to) return;
+    const previous = [...goals];
     const reordered = [...goals];
     const [moved] = reordered.splice(from, 1);
     reordered.splice(to, 0, moved);
     setGoals(reordered);
     invalidate('goals');
-    api.patch('/goals/reorder', { order: reordered.map(g => g.id) }).catch(() => {});
+    api.patch('/goals/reorder', { order: reordered.map(g => g.id) }).catch(() => {
+      setGoals(previous);
+      invalidate('goals');
+    });
   }
 
   return (

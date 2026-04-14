@@ -26,9 +26,10 @@ api.interceptors.response.use(
     if (!config) return Promise.reject(err);
 
     const isNetworkError = !err.response;
+    const isSafeMethod = ['get', 'head', 'options'].includes((config.method || '').toLowerCase());
     config._retryCount = config._retryCount || 0;
 
-    if (isNetworkError && config._retryCount < 2) {
+    if (isNetworkError && isSafeMethod && config._retryCount < 2) {
       config._retryCount += 1;
       await new Promise((resolve) => setTimeout(resolve, 3000));
       return api(config);

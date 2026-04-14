@@ -61,6 +61,9 @@ router.post('/register', async (req, res, next) => {
     if (!email || !password) {
       return res.status(400).json({ error: 'email and password are required' });
     }
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    }
 
     const existing = await queries.getUserByEmail(email);
     if (existing) {
@@ -165,6 +168,7 @@ router.post('/reset-password', async (req, res, next) => {
   try {
     const { token, password } = req.body;
     if (!token || !password) return res.status(400).json({ error: 'token and password are required' });
+    if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
 
     let payload;
     try {

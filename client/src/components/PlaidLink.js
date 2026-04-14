@@ -8,9 +8,16 @@ export default function PlaidLink({ onSuccess, label }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    api.post('/accounts/link-token')
-      .then(({ data }) => setLinkToken(data.link_token))
-      .catch(() => setError('Failed to initialize Plaid Link'));
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await api.post('/accounts/link-token');
+        if (!cancelled) setLinkToken(data.link_token);
+      } catch {
+        if (!cancelled) setError('Failed to initialize Plaid Link');
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   const handleSuccess = useCallback(async (publicToken) => {

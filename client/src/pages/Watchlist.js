@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import AppNav from '../components/AppNav';
 import api from '../api/client';
 import { getWatchlist, invalidate, invalidateAllNews, getNews } from '../api/apiCache';
+import { invalidateInsightsCache } from '../api/insightsCache';
 
 export default function Watchlist() {
   const [watchlist, setWatchlist] = useState([]);
@@ -79,6 +80,7 @@ export default function Watchlist() {
     try {
       await api.post('/watchlist', { ticker });
       invalidate('watchlist');
+      invalidateInsightsCache();
       const items = await getWatchlist();
       setWatchlist(items);
       setInput('');
@@ -95,6 +97,7 @@ export default function Watchlist() {
       await api.delete(`/watchlist/${ticker}`);
       invalidate('watchlist');
       invalidate('news_' + ticker);
+      invalidateInsightsCache();
       setWatchlist(prev => prev.filter(w => w.ticker !== ticker));
       setNews(prev => prev.filter(n => n.ticker !== ticker));
     } catch {

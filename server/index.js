@@ -3,6 +3,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const authRouter = require('./routes/auth');
 const accountsRouter = require('./routes/accounts');
@@ -19,6 +21,22 @@ const errorHandler = require('./middleware/errors');
 const { runMigrations } = require('./db/migrate');
 
 const app = express();
+
+app.use(helmet());
+
+// Rate limiters — skipped in test environment to avoid breaking unit/integration tests
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  message: { error: 'Too many attempts, please try again later' },
+  skip: () => process.env.NODE_ENV === 'test',
+});
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 60,
+  message: { error: 'Too many requests, please slow down' },
+  skip: () => process.env.NODE_ENV === 'test',
+});
 
 const ALLOWED_ORIGINS = [
   'http://localhost:3000',
@@ -39,15 +57,15 @@ app.use(express.json());
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
 // Routes
-app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/auth', authLimiter, authRouter);
 app.use('/api/v1/accounts', accountsRouter);
 app.use('/api/v1/portfolio', portfolioRouter);
 app.use('/api/v1/trades', tradesRouter);
-app.use('/api/v1/insights', insightsRouter);
+app.use('/api/v1/insights', apiLimiter, insightsRouter);
 app.use('/api/v1/goals', goalsRouter);
 app.use('/api/v1/transactions', transactionsRouter);
 app.use('/api/v1/watchlist', watchlistRouter);
-app.use('/api/v1/chat', chatRouter);
+app.use('/api/v1/chat', apiLimiter, chatRouter);
 app.use('/api/v1/household', householdRouter);
 app.use('/api/v1/news', newsRouter);
 
