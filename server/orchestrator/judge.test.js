@@ -141,7 +141,21 @@ describe('runJudge — cycle 4: response parsing', () => {
 
     const result = await runJudge(mockAgentOutputs);
 
-    expect(result).toEqual(mockRankedInsights);
+    // Judge fields are all present; metadata merge may add extra fields
+    mockRankedInsights.forEach((ranked, i) => {
+      expect(result[i]).toMatchObject(ranked);
+    });
+  });
+
+  test('preserves original agent metadata fields (type, txId, etc.) after judge merge', async () => {
+    mockCreate.mockResolvedValue(makeAnthropicResponse(mockRankedInsights));
+
+    const result = await runJudge(mockAgentOutputs);
+
+    // 'TSLA is 45% of portfolio' originated from portfolio agent with type: 'concentration_risk'
+    const portfolioInsight = result.find(i => i.message === 'TSLA is 45% of portfolio');
+    expect(portfolioInsight).toBeDefined();
+    expect(portfolioInsight.type).toBe('concentration_risk');
   });
 
   test('each insight has a score field', async () => {

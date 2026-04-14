@@ -40,6 +40,14 @@ Include all non-trivial insights. Sort by score descending. Do not include any t
  * @returns {Promise<Array>} - ranked insights with score fields
  */
 async function runJudge(agentOutputs) {
+  // Build message → original insight metadata lookup so we can merge it back after judge strips fields
+  const metaByMessage = {};
+  for (const insights of Object.values(agentOutputs)) {
+    for (const ins of (Array.isArray(insights) ? insights : [])) {
+      if (ins.message) metaByMessage[ins.message] = ins;
+    }
+  }
+
   try {
     const response = await client.messages.create({
       model: MODEL,
@@ -55,7 +63,11 @@ async function runJudge(agentOutputs) {
 
     const text = response.content[0].text;
     const parsed = JSON.parse(text);
-    return parsed.insights;
+    // Merge original metadata (type, txId, amount, date, ticker, merchant) back into scored insights
+    return parsed.insights.map(ins => ({
+      ...(metaByMessage[ins.message] || {}),
+      ...ins,
+    }));
   } catch {
     // Fallback: flatten all agent outputs without scoring
     return Object.values(agentOutputs).flat();

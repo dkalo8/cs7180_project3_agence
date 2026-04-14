@@ -51,6 +51,7 @@ router.get('/', authMiddleware, async (req, res, next) => {
       positions,
       cash: parseFloat(account.cash),
       equity: parseFloat(account.equity),
+      lastEquity: parseFloat(account.last_equity || account.equity),
     });
   } catch (err) {
     next(err);

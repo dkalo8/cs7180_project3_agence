@@ -94,11 +94,11 @@ export default function Dashboard() {
   const cash = portfolio?.cash ?? null;
   const positions = portfolio?.positions ?? [];
 
-  const lastEquity = history.length > 0 ? history[history.length - 1].equity : null;
-  const prevEquity = history.length > 1 ? history[history.length - 2].equity : null;
-  const dayChange = lastEquity != null && prevEquity != null ? lastEquity - prevEquity : null;
-  const dayChangePct = dayChange != null && prevEquity ? (dayChange / prevEquity) * 100 : null;
-  const periodPL = lastEquity != null && baseValue ? lastEquity - baseValue : null;
+  const lastHistoryEquity = history.length > 0 ? history[history.length - 1].equity : null;
+  const lastEquity = portfolio?.lastEquity ?? null;
+  const dayChange = equity != null && lastEquity != null ? equity - lastEquity : null;
+  const dayChangePct = dayChange != null && lastEquity ? (dayChange / lastEquity) * 100 : null;
+  const periodPL = lastHistoryEquity != null && baseValue ? lastHistoryEquity - baseValue : null;
   const periodPLPct = periodPL != null && baseValue ? (periodPL / baseValue) * 100 : null;
 
   if (loading) {

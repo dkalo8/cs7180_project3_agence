@@ -104,6 +104,22 @@ describe('GET /api/v1/portfolio', () => {
     expect(res.body.cash).toBe(10000);
   });
 
+  test('returns lastEquity from Alpaca account for day change calculation', async () => {
+    alpacaService.getPositions.mockResolvedValue([]);
+    alpacaService.getAccount.mockResolvedValue({
+      cash: '1000.00',
+      equity: '5000.00',
+      last_equity: '4900.00',
+    });
+
+    const res = await request(app)
+      .get('/api/v1/portfolio')
+      .set('Authorization', `Bearer ${validToken}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('lastEquity', 4900);
+  });
+
   test('returns 200 with empty positions when Alpaca service throws', async () => {
     alpacaService.getPositions.mockRejectedValue(new Error('Alpaca API error'));
     alpacaService.getAccount.mockRejectedValue(new Error('Alpaca API error'));
