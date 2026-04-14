@@ -108,6 +108,38 @@ describe('anomalyAgent — cycle 4: core logic', () => {
     expect(dup.date).toBe('2026-03-15');
   });
 
+  test('duplicate_charge amount is always positive for negative Plaid transactions', () => {
+    const userData = {
+      transactions: [
+        { id: 'tx1', amount: -15, merchant_name: 'Netflix', category: 'Subscriptions', date: '2026-03-01' },
+        { id: 'tx2', amount: -15, merchant_name: 'Netflix', category: 'Subscriptions', date: '2026-03-01' },
+      ],
+      balances: [],
+      goals: [],
+    };
+    const result = anomalyAgent(userData);
+    const dup = result.find(i => i.type === 'duplicate_charge');
+    expect(dup).toBeDefined();
+    expect(dup.amount).toBe(15);
+    expect(dup.message).not.toContain('-');
+  });
+
+  test('repeated_charge amount is always positive for negative Plaid transactions', () => {
+    const userData = {
+      transactions: [
+        { id: 'tx1', amount: -500, merchant_name: 'United Airlines', category: 'Travel', date: '2026-03-13' },
+        { id: 'tx2', amount: -500, merchant_name: 'United Airlines', category: 'Travel', date: '2026-02-13' },
+      ],
+      balances: [],
+      goals: [],
+    };
+    const result = anomalyAgent(userData);
+    const rep = result.find(i => i.type === 'repeated_charge');
+    expect(rep).toBeDefined();
+    expect(rep.amount).toBe(500);
+    expect(rep.message).not.toContain('$-');
+  });
+
   test('repeated_charge insight includes merchant and amount fields for multi-row routing', () => {
     const userData = {
       transactions: [

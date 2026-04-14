@@ -157,16 +157,18 @@ export default function Expenses() {
                       let firstMatch = true;
                       return filtered.map(tx => {
                         const txMerchant = (tx.merchant_name || tx.merchant || '').toLowerCase();
+                        const txAbsAmt = Math.abs(parseFloat(tx.amount));
+                        const hlAbsAmt = Math.abs(parseFloat(highlightAmount || '0'));
                         const isMatch = highlightTxId
                           ? tx.id === highlightTxId
                           : highlightAmount != null && highlightDate
-                            ? Math.abs(parseFloat(tx.amount) - parseFloat(highlightAmount)) < 0.01 &&
+                            ? Math.abs(txAbsAmt - hlAbsAmt) < 0.01 &&
                               String(tx.date).slice(0, 10) === String(highlightDate).slice(0, 10)
                             : highlightAmount != null && highlightMerchant
-                              ? Math.abs(parseFloat(tx.amount) - parseFloat(highlightAmount)) < 0.01 &&
+                              ? Math.abs(txAbsAmt - hlAbsAmt) < 0.01 &&
                                 txMerchant === highlightMerchant.toLowerCase()
                               : highlightAmount != null &&
-                                Math.abs(parseFloat(tx.amount) - parseFloat(highlightAmount)) < 0.01;
+                                Math.abs(txAbsAmt - hlAbsAmt) < 0.01;
                         const setRef = isMatch && firstMatch;
                         if (setRef) firstMatch = false;
                         return (

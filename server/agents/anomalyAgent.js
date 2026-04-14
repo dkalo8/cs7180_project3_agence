@@ -32,20 +32,22 @@ function anomalyAgent(userData) {
   }
 
   // Flag duplicate charges: same amount + same date (merchant excluded — often null)
+  // Use abs amount so negative Plaid credits don't generate "$-X" insights
   const seen = new Map();
   for (const tx of transactions) {
     const name = tx.merchant_name || tx.merchant || 'unknown merchant';
-    const key = `${tx.amount}|${tx.date}`;
+    const absAmount = Math.abs(tx.amount);
+    const key = `${absAmount}|${tx.date}`;
     if (seen.has(key)) {
       const already = insights.some(
-        i => i.type === 'duplicate_charge' && i.amount === tx.amount
+        i => i.type === 'duplicate_charge' && i.amount === absAmount
       );
       if (!already) {
         insights.push({
           type: 'duplicate_charge',
-          message: `Possible duplicate charge of $${tx.amount} at ${name}`,
+          message: `Possible duplicate charge of $${absAmount} at ${name}`,
           severity: 'medium',
-          amount: tx.amount,
+          amount: absAmount,
           date: tx.date,
           txId: tx.id,
           merchant: name,
@@ -72,12 +74,12 @@ function anomalyAgent(userData) {
     if (dates.size < 2) continue; // all same date — already caught by duplicate check
     const parts = key.split('|');
     const name = parts[0];
-    const amount = parts[1];
+    const absAmount = Math.abs(parseFloat(parts[1]));
     insights.push({
       type: 'repeated_charge',
-      message: `${txs.length} identical $${amount} charges from ${name} — possible recurring billing`,
+      message: `${txs.length} identical $${absAmount} charges from ${name} — possible recurring billing`,
       severity: 'medium',
-      amount: parseFloat(amount),
+      amount: absAmount,
       txId: txs[0].id,
       merchant: name,
     });
