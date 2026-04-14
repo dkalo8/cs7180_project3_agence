@@ -67,17 +67,17 @@
 ### 5. Phase 10: Documentation & Demo (deadline-sensitive)
 
 #### 10A: Parallel Dev + Second PR (covers p3 rubric gaps)
-- [ ] **Create `feat/phase10-docs` worktree** — `git worktree add ../agence-phase10 -b feat/phase10-docs`; do all Phase 10 doc work on this branch (gives literal worktree evidence + 2nd feature branch)
-- [ ] **Open PR #7 from `feat/phase10-docs` → main** with explicit C.L.E.A.R. framework in PR body (Context / Logic / Evidence / Alternatives / Review sections); include AI disclosure; merge after blog + sprint docs are in
+- [x] **Create `feat/phase10-docs` worktree** — `git worktree add ../agence-phase10 -b feat/phase10-docs`; do all Phase 10 doc work on this branch (gives literal worktree evidence + 2nd feature branch)
+- [ ] **Merge PR #7** (`feat/phase10-docs` → main) — open at github.com/dkalo8/agence-finance-copilot/pull/7; merge after blog + reflection added to branch
 
 #### 10B: Sprint Docs
-- [ ] **Create sprint-3.md** — covers UX/UI polish (phases 8A–8H: dashboard redesign, expenses, watchlist, chat, caching), aesthetic redesign (9B), anomaly detection, household accounts (9A); include planning, retro, velocity, AI disclosure, dated async standup notes
-- [ ] **Create sprint-4.md** — covers Google Auth (9C), news feed (9D), nav redesign (9E), password reset (9F), Step 5 polish backlog, 5b code review fixes (11 fixes), About page; include planning, retro, velocity, AI disclosure, dated async standup notes
-- [ ] **Review sprint-1.md + sprint-2.md** — verify they accurately reflect what was built; update if gaps (dates, velocity, standup notes)
+- [x] **Create sprint-3.md** — phases 8A–8H, 9A household, 9B aesthetic redesign; planning, retro, 3 standup entries, AI disclosure
+- [x] **Create sprint-4.md** — 9C Google Auth, 9D news, 9E nav, 9F password reset, Step 5, 5b, About; planning, retro, 3 standup entries, AI disclosure
+- [x] **Review sprint-1.md + sprint-2.md** — both accurate; no changes needed
 
 #### 10C: README
-- [ ] **Add Plaid sandbox instructions** — how to link an account, sandbox credentials (`user_good` / `pass_good`), what to expect after linking, how to trigger insights
-- [ ] **Add architecture diagram** (Mermaid) — agent layer → orchestrator → judge → frontend flow
+- [x] **Add Plaid sandbox instructions** — `user_good` / `pass_good`, step-by-step link flow, what to expect
+- [x] **Architecture diagram** — Mermaid diagram already present; updated to 7 agents (watchlistAgent added)
 
 #### 10D: Blog Post
 - [ ] **Write + publish blog post** — 1,500+ words on Medium or dev.to; cover: the problem, multi-agent architecture, LLM-as-judge pattern, Claude Code workflow (skills/hooks/MCP/agents), key lessons learned
