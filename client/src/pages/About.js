@@ -59,7 +59,7 @@ export default function About() {
   return (
     <div className="page">
       <AppNav />
-      <main style={{ maxWidth: 860, margin: '0 auto', padding: '2rem 1.5rem 4rem' }}>
+      <main style={{ maxWidth: 1100, margin: '0 auto', padding: '2rem 2.5rem 4rem' }}>
 
         {/* Hero */}
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
@@ -138,7 +138,7 @@ export default function About() {
           <h2 className="section-heading">The Six Agents</h2>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
             gap: '1rem',
           }}>
             {AGENTS.map(agent => (
