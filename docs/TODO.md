@@ -80,11 +80,12 @@
 - [x] **Architecture diagram** — Mermaid diagram already present; updated to 7 agents (watchlistAgent added)
 
 #### 10D: Blog Post
-- [ ] **Write + publish blog post** — 1,500+ words on Medium or dev.to; cover: the problem, multi-agent architecture, LLM-as-judge pattern, Claude Code workflow (skills/hooks/MCP/agents), key lessons learned
+- [x] **Draft written** — `docs/blog-post.md` in `feat/phase10-docs` branch; 1,600+ words covering problem, architecture, LLM-as-judge, Claude Code workflow, caching lesson, marketContextAgent incident
+- [ ] **Publish** — copy to Medium or dev.to; add published URL to PR #7 description and showcase form
 
 #### 10E: Demo + Reflection
 - [ ] **Record 5–10 min screencast** — show: login → dashboard → insights → expenses → goals → portfolio → watchlist → settings; narrate agent outputs and Claude Code tooling
-- [ ] **Write 500-word individual reflection** — specific Claude Code insights, what worked, what didn't, how AI changed the dev workflow
+- [x] **Individual reflection written** — `docs/reflection.md` in `feat/phase10-docs` branch; 547 words on multi-agent review insight, hooks feedback loop, Claude's limits
 
 #### 10F: Submit
 - [ ] **Submit showcase form** — project name, Vercel URL, GitHub URL, thumbnail, video link, blog link

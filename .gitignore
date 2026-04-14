@@ -21,9 +21,10 @@ original-proposal.md
 fixes.md
 aesthetic-redesign.md
 post-p3.md
-post-p3.md
 
 # OMC runtime state (session scratch, not project code)
 .omc/
 server/.omc/
 .vercel
+docs/blog-post.md
+docs/reflection.md
