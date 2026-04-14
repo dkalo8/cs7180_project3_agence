@@ -166,6 +166,8 @@ Alpaca is connected server-side via environment variables — users do not confi
 ## Status
 
 - **246/246 tests passing** (Jest unit + integration)
+- **17 property-based tests** (fast-check — spendingAgent, anomalyAgent, goalsAgent)
+- **Mutation score: 67%** (Stryker — `npm run mutation`; targets the three core agents)
 - **4/4 E2E tests passing** (Playwright, live Vercel URL)
 - **Coverage**: ~95% statements, 70%+ enforced in CI
 - CI: GitHub Actions (lint → test → coverage → build → security → E2E → AI review)

@@ -92,6 +92,21 @@
 
 ---
 
+### Bonus (+10 pts available)
+
+- [x] **fast-check property tests (+3)** — 17 property-based tests in `server/agents/agents.property.test.js`; covers spendingAgent (5), anomalyAgent (5), goalsAgent (7); run via `npm test`
+- [x] **Stryker mutation testing (+3)** — `stryker.config.json` targets 3 core agents; `npm run mutation`; score ~67% (spendingAgent 85.7%, goalsAgent 67.2%, anomalyAgent 50.6%); HTML report at `reports/mutation/mutation.html`
+- [ ] **Agent SDK upgrade (+4)** — convert `POST /api/v1/chat` from single system-prompt call to tool-use agent loop with tools: `get_transactions`, `get_portfolio`, `get_goals`, `get_insights`
+
+### Next Steps (post-submission improvements)
+
+- [x] **duplicate_charge deep-link bug** — clicking insight now routes to `?amount=X&date=Y`; Expenses.js highlights ALL rows matching that amount+date, not just one txId. `anomalyAgent` insight now includes `date` field.
+- [ ] **Improve anomalyAgent mutation score** — add exact-message assertions in `anomalyAgent.test.js` to kill surviving string-template mutants; target: 70%+
+- [ ] **Agent SDK chat upgrade** — see bonus above (+4)
+- [ ] **Blog publish + screencast** — publish blog post to LinkedIn/Medium; record 5–10 min demo; submit showcase form
+
+---
+
 ## Rubric Scorecard
 
 | Category | Max | Est. Now | Gap / Why Not Max |

@@ -39,13 +39,15 @@ export default function Insights() {
         <ul className="insight-list">
           {insights.map((insight, i) => {
             const base = SOURCE_ROUTE[insight.source] || null;
-            const route = base && insight.txId
-              ? `${base}?txId=${insight.txId}`
-              : base && insight.amount != null
-                ? `${base}?amount=${insight.amount}`
-                : base && insight.ticker
-                  ? `${base}?ticker=${insight.ticker}`
-                  : base;
+            const route = base && insight.type === 'duplicate_charge' && insight.amount != null && insight.date
+              ? `${base}?amount=${insight.amount}&date=${insight.date}`
+              : base && insight.txId
+                ? `${base}?txId=${insight.txId}`
+                : base && insight.amount != null
+                  ? `${base}?amount=${insight.amount}`
+                  : base && insight.ticker
+                    ? `${base}?ticker=${insight.ticker}`
+                    : base;
             return (
               <li
                 key={i}

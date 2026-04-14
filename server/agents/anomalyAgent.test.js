@@ -93,6 +93,21 @@ describe('anomalyAgent — cycle 4: core logic', () => {
     expect(duplicates[0].severity).toBe('medium');
   });
 
+  test('duplicate_charge insight includes date field matching the transaction date', () => {
+    const userData = {
+      transactions: [
+        { id: 'tx1', amount: 25, merchant: 'Spotify', category: 'Subscriptions', date: '2026-03-15' },
+        { id: 'tx2', amount: 25, merchant: 'Spotify', category: 'Subscriptions', date: '2026-03-15' },
+      ],
+      balances: [],
+      goals: [],
+    };
+    const result = anomalyAgent(userData);
+    const dup = result.find(i => i.type === 'duplicate_charge');
+    expect(dup).toBeDefined();
+    expect(dup.date).toBe('2026-03-15');
+  });
+
   test('does not flag a duplicate when same merchant appears on different days', () => {
     const userData = {
       transactions: [

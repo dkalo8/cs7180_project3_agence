@@ -46,6 +46,7 @@ function anomalyAgent(userData) {
           message: `Possible duplicate charge of $${tx.amount} at ${name}`,
           severity: 'medium',
           amount: tx.amount,
+          date: tx.date,
           txId: tx.id,
           merchant: name,
         });

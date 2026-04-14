@@ -60,6 +60,7 @@ export default function Expenses() {
   const searchParams = new URLSearchParams(location.search);
   const highlightTxId = searchParams.get('txId');
   const highlightAmount = searchParams.get('amount');
+  const highlightDate = searchParams.get('date');
 
   useEffect(() => {
     getTransactions()
@@ -156,8 +157,11 @@ export default function Expenses() {
                       return filtered.map(tx => {
                         const isMatch = highlightTxId
                           ? tx.id === highlightTxId
-                          : highlightAmount != null &&
-                            Math.abs(parseFloat(tx.amount) - parseFloat(highlightAmount)) < 0.01;
+                          : highlightAmount != null && highlightDate
+                            ? Math.abs(parseFloat(tx.amount) - parseFloat(highlightAmount)) < 0.01 &&
+                              String(tx.date).slice(0, 10) === highlightDate
+                            : highlightAmount != null &&
+                              Math.abs(parseFloat(tx.amount) - parseFloat(highlightAmount)) < 0.01;
                         const setRef = isMatch && firstMatch;
                         if (setRef) firstMatch = false;
                         return (

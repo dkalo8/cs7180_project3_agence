@@ -30,6 +30,12 @@ npm run dev        # Express + nodemon
 npm run lint       # ESLint — run before every commit, must pass clean
 npm test           # Jest — run before every commit, must pass clean
 npm run test:watch # TDD mode for red-green-refactor
+npm run mutation   # Stryker mutation testing (targets agents/spendingAgent, anomalyAgent, goalsAgent)
+
+## Testing Tools
+- **Jest + Supertest** — unit + integration tests (*.test.js beside source, integration/ for routes)
+- **fast-check** — property-based tests in `agents/agents.property.test.js`; 17 tests across all 3 core agents
+- **Stryker** — mutation testing via `npm run mutation`; config in `stryker.config.json`; HTML report at `reports/mutation/mutation.html`; current score ~67%
 
 ## Rules
 - **API boundaries**: Alpaca = prices/portfolio/trades. Plaid = banking/transactions. Finnhub = news/sentiment. Never cross these.
