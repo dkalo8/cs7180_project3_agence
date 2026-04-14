@@ -62,7 +62,7 @@
 
 ---
 
-- [ ] **About page** — user-friendly page explaining the app, multi-agent architecture, Agents + Finance = Agence vision, how each agent differentiates the platform, how to navigate the app. Lives in nav (suggest: top-level link next to Insights, or under a "?" icon).
+- [x] **About page** — hero + vision, 4-step how-it-works, 6 agent cards (icon/source/what/why), nav guide, tech stack. Public route `/about`, top-level nav link next to Insights.
 
 ### 5. Phase 10: Documentation & Demo (deadline-sensitive)
 - [ ] **Add Plaid sandbox instructions to README.md** — graders need: how to link an account, sandbox credentials, what to expect after linking

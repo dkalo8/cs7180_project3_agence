@@ -14,6 +14,7 @@ import Portfolio from './pages/Portfolio';
 import Expenses from './pages/Expenses';
 import Watchlist from './pages/Watchlist';
 import Settings from './pages/Settings';
+import About from './pages/About';
 import './App.css';
 
 // Renders ChatWidget only when authenticated — must be inside AuthProvider
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="/expenses" element={<PrivateRoute><Expenses /></PrivateRoute>} />
           <Route path="/watchlist" element={<PrivateRoute><Watchlist /></PrivateRoute>} />
           <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
+          <Route path="/about" element={<About />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <AuthShell />

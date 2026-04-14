@@ -6,6 +6,7 @@ export default function AppNav() {
       <Link to="/">Agence</Link>
       <nav>
         <Link to="/insights">Insights</Link>
+        <Link to="/about">About</Link>
 
         <div className="nav-dropdown">
           <span className="nav-dropdown-trigger">Money</span>
