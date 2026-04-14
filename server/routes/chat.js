@@ -6,6 +6,169 @@ const authMiddleware = require('../middleware/auth');
 const queries = require('../db/queries');
 const alpacaService = require('../services/alpaca');
 
+const MAX_TOOL_ROUNDS = 5;
+
+const TOOLS = [
+  {
+    name: 'get_transactions',
+    description: 'Fetch the user\'s recent bank transactions from Plaid.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', description: 'Max transactions to return (default 50)' },
+      },
+      required: [],
+    },
+  },
+  {
+    name: 'get_portfolio',
+    description: 'Fetch the user\'s Alpaca paper-trading portfolio: account equity, cash, and open positions.',
+    input_schema: {
+      type: 'object',
+      properties: {},
+      required: [],
+    },
+  },
+  {
+    name: 'get_goals',
+    description: 'Fetch the user\'s savings goals (name, target, current balance, monthly contribution).',
+    input_schema: {
+      type: 'object',
+      properties: {},
+      required: [],
+    },
+  },
+  {
+    name: 'get_watchlist',
+    description: 'Fetch the tickers on the user\'s watchlist.',
+    input_schema: {
+      type: 'object',
+      properties: {},
+      required: [],
+    },
+  },
+  {
+    name: 'get_trades',
+    description: 'Fetch the user\'s paper-trade history.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', description: 'Max trades to return (default 20)' },
+      },
+      required: [],
+    },
+  },
+];
+
+async function executeTool(name, input, userId) {
+  switch (name) {
+    case 'get_transactions': {
+      const txs = await queries.getTransactionsByUserId(userId).catch(() => []);
+      const limit = input?.limit || 50;
+      return txs.slice(0, limit).map(t => ({
+        id: t.id,
+        date: String(t.date).slice(0, 10),
+        merchant: t.merchant_name || t.merchant || 'Unknown',
+        category: t.category || 'OTHER',
+        amount: parseFloat(t.amount),
+      }));
+    }
+    case 'get_portfolio': {
+      const [account, positions] = await Promise.all([
+        alpacaService.getAccount().catch(() => ({ cash: '0', equity: '0' })),
+        alpacaService.getPositions().catch(() => []),
+      ]);
+      return {
+        equity: parseFloat(account.equity || 0),
+        cash: parseFloat(account.cash || 0),
+        positions: positions.map(p => ({
+          symbol: p.symbol,
+          qty: parseFloat(p.qty),
+          current_price: parseFloat(p.current_price),
+          market_value: parseFloat(p.market_value),
+          unrealized_pl: parseFloat(p.unrealized_pl),
+          unrealized_plpc: parseFloat(p.unrealized_plpc),
+        })),
+      };
+    }
+    case 'get_goals': {
+      const goals = await queries.getGoalsByUserId(userId).catch(() => []);
+      return goals.map(g => ({
+        name: g.name,
+        target: parseFloat(g.target),
+        current: parseFloat(g.current),
+        monthly_contribution: parseFloat(g.monthly_contribution || 0),
+      }));
+    }
+    case 'get_watchlist': {
+      const wl = await queries.getWatchlistByUserId(userId).catch(() => []);
+      return wl.map(w => ({ ticker: w.ticker, added_at: String(w.added_at).slice(0, 10) }));
+    }
+    case 'get_trades': {
+      const trades = await queries.getTradesByUserId(userId).catch(() => []);
+      const limit = input?.limit || 20;
+      return trades.slice(0, limit).map(t => ({
+        date: String(t.created_at || t.date || '').slice(0, 10),
+        action: t.action,
+        ticker: t.ticker,
+        quantity: t.quantity,
+        price: parseFloat(t.price || 0),
+      }));
+    }
+    default:
+      return { error: `Unknown tool: ${name}` };
+  }
+}
+
+async function runAgentLoop(anthropic, messages, userId) {
+  const systemPrompt = `You are Agence, an AI financial copilot. Use the available tools to fetch the user's financial data and answer their questions accurately. Be concise and actionable.
+
+FORMATTING: Displayed in a narrow chat popup (~440px). Keep tables to 2 columns max. For 3+ attributes, use a bulleted list instead of a table.`;
+
+  for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1024,
+      system: systemPrompt,
+      tools: TOOLS,
+      messages,
+    });
+
+    if (response.stop_reason === 'end_turn') {
+      const textBlock = response.content.find(b => b.type === 'text');
+      return textBlock?.text ?? '';
+    }
+
+    if (response.stop_reason === 'tool_use') {
+      const toolUseBlocks = response.content.filter(b => b.type === 'tool_use');
+
+      // Add assistant message with tool_use blocks
+      messages.push({ role: 'assistant', content: response.content });
+
+      // Execute all tool calls in parallel
+      const toolResults = await Promise.all(
+        toolUseBlocks.map(async tc => {
+          const result = await executeTool(tc.name, tc.input, userId);
+          return {
+            type: 'tool_result',
+            tool_use_id: tc.id,
+            content: JSON.stringify(result),
+          };
+        })
+      );
+
+      // Add tool results as user message
+      messages.push({ role: 'user', content: toolResults });
+      continue;
+    }
+
+    // Unexpected stop reason
+    break;
+  }
+
+  return 'I was unable to complete the analysis. Please try again.';
+}
+
 // POST /api/v1/chat
 router.post('/', authMiddleware, async (req, res, next) => {
   try {
@@ -17,90 +180,13 @@ router.post('/', authMiddleware, async (req, res, next) => {
 
     const { userId } = req;
 
-    // Load full financial context in parallel
-    const [transactions, accounts, goals, watchlist, trades, rawPositions, account] = await Promise.all([
-      queries.getTransactionsByUserId(userId).catch(() => []),
-      queries.getAccountsByUserId(userId).catch(() => []),
-      queries.getGoalsByUserId(userId).catch(() => []),
-      queries.getWatchlistByUserId(userId).catch(() => []),
-      queries.getTradesByUserId(userId).catch(() => []),
-      alpacaService.getPositions().catch(() => []),
-      alpacaService.getAccount().catch(() => ({ cash: '0', equity: '0' })),
-    ]);
-
-    // Build concise financial summary for system prompt
-    const equity = parseFloat(account.equity || 0);
-    const cash = parseFloat(account.cash || 0);
-    const totalValue = equity + cash;
-
-    const recentTx = transactions.slice(0, 20).map(t =>
-      `  - ${String(t.date).slice(0, 10)} ${t.merchant_name || t.category || 'Unknown'}: $${Math.abs(t.amount).toFixed(2)}`
-    ).join('\n');
-
-    const goalsText = goals.map(g =>
-      `  - ${g.name}: $${g.current}/$${g.target} (monthly: $${g.monthly_contribution || 0})`
-    ).join('\n');
-
-    const accountsText = accounts.map(a =>
-      `  - ${a.plaid_name || a.name || 'Bank Account'}: $${a.balance || 0}`
-    ).join('\n');
-
-    const positionsText = rawPositions.map(p =>
-      `  - ${p.symbol}: ${p.qty} shares @ $${parseFloat(p.current_price).toFixed(2)}`
-    ).join('\n');
-
-    const watchlistText = watchlist.map(w =>
-      `  - ${w.ticker} (added ${String(w.added_at).slice(0, 10)})`
-    ).join('\n');
-
-    const tradesText = trades.slice(0, 20).map(t =>
-      `  - ${String(t.created_at || t.date || '').slice(0, 10)} ${t.action?.toUpperCase()} ${t.quantity}x ${t.ticker} @ $${parseFloat(t.price || 0).toFixed(2)}`
-    ).join('\n');
-
-    const systemPrompt = `You are Agence, an AI financial copilot. You have full access to the user's real financial data across all sections of the app. Be concise, specific, and actionable.
-
-PORTFOLIO SUMMARY:
-- Total equity: $${equity.toFixed(2)}
-- Cash: $${cash.toFixed(2)}
-- Portfolio total: $${totalValue.toFixed(2)}
-
-POSITIONS:
-${positionsText || '  (no positions)'}
-
-BANK ACCOUNTS:
-${accountsText || '  (no linked accounts)'}
-
-SAVINGS GOALS:
-${goalsText || '  (no goals set)'}
-
-WATCHLIST (tickers user is tracking):
-${watchlistText || '  (no tickers watched)'}
-
-RECENT TRADES (last 20):
-${tradesText || '  (no trades yet)'}
-
-RECENT TRANSACTIONS (last 20):
-${recentTx || '  (no transactions)'}
-
-You have complete visibility into the user's financial life: spending, investments, goals, watchlist, and trade history. Answer any question using this data. Never fabricate numbers not shown above.
-
-FORMATTING: You are displayed in a narrow chat popup (~440px). Keep tables to 2 columns max. For 3+ attributes, use a bulleted list instead of a table. Never use tables wider than 2 columns.`;
-
-    // Build messages array: history + new user message
     const messages = [
       ...history.map(h => ({ role: h.role, content: h.content })),
       { role: 'user', content: message.trim() },
     ];
 
     const anthropic = new Anthropic();
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
-      system: systemPrompt,
-      messages,
-    });
-
-    const reply = response.content.find(b => b.type === 'text')?.text ?? '';
+    const reply = await runAgentLoop(anthropic, messages, userId);
     return res.status(200).json({ reply });
   } catch (err) {
     next(err);
