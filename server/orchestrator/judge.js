@@ -64,13 +64,15 @@ async function runJudge(agentOutputs) {
     const text = response.content[0].text;
     const parsed = JSON.parse(text);
     // Merge original metadata (type, txId, amount, date, ticker, merchant) back into scored insights
-    return parsed.insights.map(ins => ({
-      ...(metaByMessage[ins.message] || {}),
-      ...ins,
-    }));
+    return parsed.insights
+      .filter(ins => ins && ins.message && ins.message.trim())
+      .map(ins => ({
+        ...(metaByMessage[ins.message] || {}),
+        ...ins,
+      }));
   } catch {
     // Fallback: flatten all agent outputs without scoring
-    return Object.values(agentOutputs).flat();
+    return Object.values(agentOutputs).flat().filter(ins => ins && ins.message);
   }
 }
 

@@ -65,14 +65,20 @@ export default function ChatWidget() {
             <div ref={bottomRef} />
           </div>
           <form className="chat-form" onSubmit={sendMessage}>
-            <input
+            <textarea
               ref={inputRef}
               className="chat-input"
-              type="text"
               placeholder="Ask about your finances..."
               value={input}
               onChange={e => setInput(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage(e);
+                }
+              }}
               disabled={loading}
+              rows={2}
             />
             <button className="btn btn-primary" type="submit" disabled={loading || !input.trim()}>
               Send
@@ -85,7 +91,7 @@ export default function ChatWidget() {
         onClick={() => setOpen(o => !o)}
         aria-label="Ask Agence"
       >
-        {open ? '✕' : '💬'}
+        {open ? '✕' : 'A'}
       </button>
     </div>
   );

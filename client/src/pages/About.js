@@ -3,42 +3,42 @@ import AppNav from '../components/AppNav';
 const AGENTS = [
   {
     name: 'Spending Agent',
-    icon: '💳',
+    abbr: 'SP',
     source: 'Plaid',
     what: 'Categorizes every transaction and compares month-over-month. Flags budget overruns before they snowball.',
     why: 'Most budgeting apps show you what happened. Agence tells you what it means.',
   },
   {
     name: 'Anomaly Agent',
-    icon: '🔍',
+    abbr: 'AN',
     source: 'Plaid',
     what: 'Detects unusual charges — large one-offs, duplicate transactions, and repeated identical amounts.',
     why: 'Catches fraud signals and billing errors you\'d miss scrolling a transaction list.',
   },
   {
     name: 'Goals Agent',
-    icon: '🎯',
+    abbr: 'GO',
     source: 'Plaid',
     what: 'Tracks pace toward each savings goal. Projects completion date based on current contribution rate.',
     why: 'Turns abstract targets into a live countdown with a clear verdict: on track or off.',
   },
   {
     name: 'Portfolio Agent',
-    icon: '📈',
+    abbr: 'PO',
     source: 'Alpaca',
     what: 'Analyzes position concentration, unrealized P&L, and portfolio composition against your risk profile.',
     why: 'Surfaces the risks hiding inside a healthy-looking total return number.',
   },
   {
     name: 'Market Context Agent',
-    icon: '🌐',
+    abbr: 'MX',
     source: 'Alpaca + Finnhub',
     what: 'Pulls real-time price moves and news sentiment for every ticker on your watchlist.',
     why: 'Connects market events to your actual holdings — not just a generic feed.',
   },
   {
     name: 'Autopilot Agent',
-    icon: '🤖',
+    abbr: 'AU',
     source: 'Alpaca',
     what: 'Evaluates your rule-based triggers against live market conditions and executes paper trades automatically.',
     why: 'Lets you test trading strategies in a risk-free paper environment without manual order entry.',
@@ -152,7 +152,13 @@ export default function About() {
             {AGENTS.map(agent => (
               <div key={agent.name} className="insight-card" style={{ padding: '1.25rem 1.4rem', flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
-                  <span style={{ fontSize: '1.4rem' }}>{agent.icon}</span>
+                  <span style={{
+                    width: 32, height: 32, borderRadius: '50%',
+                    background: 'var(--navy-200)', color: 'var(--navy-700)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontWeight: 700, fontSize: '0.72rem', flexShrink: 0,
+                    fontFamily: 'var(--font-body)',
+                  }}>{agent.abbr}</span>
                   <div>
                     <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{agent.name}</div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>via {agent.source}</div>

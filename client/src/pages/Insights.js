@@ -13,11 +13,14 @@ const SOURCE_ROUTE = {
   watchlist: '/watchlist',
 };
 
+const SEVERITIES = ['all', 'high', 'medium', 'low', 'info'];
+
 export default function Insights() {
   const navigate = useNavigate();
   const [insights, setInsights] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [filter, setFilter] = useState('all');
 
   const loadInsights = useCallback((force = false) => {
     setLoading(true);
@@ -51,8 +54,21 @@ export default function Insights() {
         {!loading && !error && insights.length === 0 && (
           <p>No insights yet. Connect your accounts to get started.</p>
         )}
+        {!loading && !error && insights.length > 0 && (
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+            {SEVERITIES.map(s => (
+              <button
+                key={s}
+                className={`period-btn${filter === s ? ' period-btn--active' : ''}`}
+                onClick={() => setFilter(s)}
+              >
+                {s.charAt(0).toUpperCase() + s.slice(1)}
+              </button>
+            ))}
+          </div>
+        )}
         <ul className="insight-list">
-          {insights.map((insight, i) => {
+          {insights.filter(ins => filter === 'all' || (ins.severity || 'info') === filter).map((insight, i) => {
             const base = SOURCE_ROUTE[insight.source] || null;
             const route = base && insight.type === 'duplicate_charge' && insight.amount != null && insight.date
               ? `${base}?amount=${insight.amount}&date=${String(insight.date).slice(0, 10)}`

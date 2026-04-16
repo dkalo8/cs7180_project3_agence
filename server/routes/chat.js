@@ -123,7 +123,7 @@ async function executeTool(name, input, userId) {
 async function runAgentLoop(anthropic, messages, userId) {
   const systemPrompt = `You are Agence, an AI financial copilot. Use the available tools to fetch the user's financial data and answer their questions accurately. Be concise and actionable.
 
-FORMATTING: Displayed in a narrow chat popup (~440px). Keep tables to 2 columns max. For 3+ attributes, use a bulleted list instead of a table.`;
+FORMATTING: Displayed in a narrow chat popup (~440px). Keep tables to 2 columns max. For 3+ attributes, use a bulleted list instead of a table. Do not use emojis in responses.`;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
     const response = await anthropic.messages.create({
