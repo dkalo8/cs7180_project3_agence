@@ -21,17 +21,10 @@ async function login(page) {
 // ── Public routes ────────────────────────────────────────────────────────────
 
 test.describe('About page (public)', () => {
-  test('loads without auth and shows six agent cards', async ({ page }) => {
+  test('loads without auth and shows six agent cards with SVG icons', async ({ page }) => {
     await page.goto('/about');
     await expect(page.locator('h1')).toContainText('Agence');
-    // Six agent cards
-    const cards = page.locator('.insight-card');
-    await expect(cards).toHaveCount(6);
-  });
-
-  test('agent cards show SVG icons (no emoji)', async ({ page }) => {
-    await page.goto('/about');
-    // Each card header should contain an svg, not a raw emoji span
+    // Six agent cards have SVG icons (the "Problem" card doesn't — it has no svg)
     const svgs = page.locator('.insight-card svg');
     await expect(svgs).toHaveCount(6);
   });
@@ -76,8 +69,8 @@ test.describe('Insights page', () => {
 
   test('shows Priority filter selected by default', async ({ page }) => {
     await page.goto('/insights');
-    await page.waitForSelector('.insight-list, p', { timeout: 30000 });
-    // Priority tab should exist and be active
+    // Wait until loading is done — filter buttons only render when insights arrive
+    await page.waitForSelector('.period-btn, p:text("No insights")', { timeout: 30000 });
     const priorityBtn = page.getByRole('button', { name: /Priority/ });
     await expect(priorityBtn).toBeVisible();
     await expect(priorityBtn).toHaveClass(/period-btn--active/);
@@ -86,9 +79,7 @@ test.describe('Insights page', () => {
   test('filter tabs change visible insights', async ({ page }) => {
     await page.goto('/insights');
     await page.waitForSelector('.period-btn', { timeout: 30000 });
-    // Click Info tab
-    await page.getByRole('button', { name: /Info/ }).click();
-    // Priority tab no longer active
+    await page.getByRole('button', { name: /^All/ }).click();
     const priorityBtn = page.getByRole('button', { name: /Priority/ });
     await expect(priorityBtn).not.toHaveClass(/period-btn--active/);
   });

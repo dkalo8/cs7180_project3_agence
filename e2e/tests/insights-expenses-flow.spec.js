@@ -117,7 +117,10 @@ test.describe('Expenses deep-link highlighting', () => {
     await page.goto('/insights');
     await page.evaluate(() => sessionStorage.removeItem('agence_insights'));
     await page.reload();
-    await page.waitForSelector('.insight-list', { timeout: 30000 });
+    // Switch to All filter so every insight is visible regardless of severity
+    await page.waitForSelector('.period-btn', { timeout: 30000 });
+    await page.getByRole('button', { name: /^All/ }).click();
+    await page.waitForSelector('.insight-list', { timeout: 15000 });
 
     // Find any clickable insight card that routes to expenses
     const cards = page.locator('.insight-card[style*="pointer"]');
@@ -159,7 +162,9 @@ test.describe('Expenses deep-link highlighting', () => {
     await page.goto('/insights');
     await page.evaluate(() => sessionStorage.removeItem('agence_insights'));
     await page.reload();
-    await page.waitForSelector('.insight-list', { timeout: 30000 });
+    await page.waitForSelector('.period-btn', { timeout: 30000 });
+    await page.getByRole('button', { name: /^All/ }).click();
+    await page.waitForSelector('.insight-list', { timeout: 15000 });
 
     const cards = page.locator('.insight-card');
     const count = await cards.count();
@@ -193,7 +198,9 @@ test.describe('Expenses deep-link highlighting', () => {
     await page.goto('/insights');
     await page.evaluate(() => sessionStorage.removeItem('agence_insights'));
     await page.reload();
-    await page.waitForSelector('.insight-list', { timeout: 30000 });
+    await page.waitForSelector('.period-btn', { timeout: 30000 });
+    await page.getByRole('button', { name: /^All/ }).click();
+    await page.waitForSelector('.insight-list', { timeout: 15000 });
 
     const cards = page.locator('.insight-card');
     const count = await cards.count();

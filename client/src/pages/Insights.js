@@ -15,6 +15,7 @@ const SOURCE_ROUTE = {
 
 const FILTERS = [
   { key: 'priority', label: 'Priority' },
+  { key: 'all',      label: 'All' },
   { key: 'high',     label: 'High' },
   { key: 'medium',   label: 'Medium' },
   { key: 'info',     label: 'Info' },
@@ -64,6 +65,7 @@ export default function Insights() {
         {!loading && !error && insights.length > 0 && (() => {
           const counts = {
             priority: insights.filter(ins => ['high','medium'].includes(getSev(ins))).length,
+            all:      insights.length,
             high:     insights.filter(ins => getSev(ins) === 'high').length,
             medium:   insights.filter(ins => getSev(ins) === 'medium').length,
             info:     insights.filter(ins => getSev(ins) === 'info').length,
@@ -99,6 +101,7 @@ export default function Insights() {
           const visible = insights.filter(ins => {
             const s = getSev(ins);
             if (filter === 'priority') return s === 'high' || s === 'medium';
+            if (filter === 'all') return true;
             return s === filter;
           });
           if (visible.length === 0 && insights.length > 0) {
