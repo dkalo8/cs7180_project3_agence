@@ -81,21 +81,19 @@ _Last updated: 2026-04-16_
 
 ---
 
-## Next Steps (in order)
+## Next Steps — SUBMISSION ONLY
 
-### Remaining: Phase 8 Documentation & Demo (user handles)
-- Blog post (Medium/dev.to, 1500+ words)
-- Screencast (5–10 min)
-- Reflection essay (500 words)
-- Showcase form submission
+**The app is feature-complete. No more code changes needed.**
 
-### Optional: Deploy updated backend to Render
-- Push `server/routes/goals.js` + other new routes live
-- Redeploy frontend to Vercel with PlaidLink + Goals UI
+### Remaining (user handles — no code required)
+1. **Blog post** — draft is at `docs/blog-post.md`; publish to LinkedIn or Medium; add URL to showcase form
+2. **Screencast** — 5–10 min demo: login → dashboard → insights → expenses → goals → portfolio → watchlist → settings; narrate agent outputs and Claude Code tooling
+3. **Showcase form** — submit after blog + video are live (project name, Vercel URL, GitHub URL, thumbnail, video link, blog link)
 
-### Optional: insights.js marketData wiring
-- Currently passes empty `{}` as marketData to orchestrator
-- Could pull Alpaca positions/quotes for richer portfolio + autopilot insights
+### URLs needed for submission
+- Frontend: https://agence-flame.vercel.app
+- Backend: https://cs7180-project3-agence.onrender.com
+- GitHub: https://github.com/dkalo8/cs7180_project3_agence
 
 ---
 
