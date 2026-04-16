@@ -47,7 +47,7 @@ describe('spendingAgent', () => {
         expect(insight).toHaveProperty('type');
         expect(insight).toHaveProperty('message');
         expect(insight).toHaveProperty('severity');
-        expect(['info', 'warning']).toContain(insight.severity);
+        expect(['info', 'medium']).toContain(insight.severity);
       });
     });
   });
@@ -83,7 +83,7 @@ describe('spendingAgent', () => {
       const insight = results.find((i) => i.type === 'category_spike');
       expect(insight).toBeDefined();
       expect(insight.message).toContain('Food & Drink');
-      expect(insight.severity).toBe('warning');
+      expect(insight.severity).toBe('medium');
     });
 
     it('does not flag when no category exceeds 30%', () => {
@@ -115,7 +115,7 @@ describe('spendingAgent', () => {
       const results = spendingAgent(userData, {});
       const insight = results.find((i) => i.type === 'monthly_increase');
       expect(insight).toBeDefined();
-      expect(insight.severity).toBe('warning');
+      expect(insight.severity).toBe('medium');
     });
 
     it('does not flag spend increase of 20% or less', () => {

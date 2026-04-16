@@ -63,9 +63,9 @@ export default function Insights() {
         )}
         {!loading && !error && insights.length > 0 && (() => {
           const counts = {
-            priority: insights.filter(ins => ['high','medium','warning'].includes(getSev(ins))).length,
+            priority: insights.filter(ins => ['high','medium'].includes(getSev(ins))).length,
             high:     insights.filter(ins => getSev(ins) === 'high').length,
-            medium:   insights.filter(ins => ['medium','warning'].includes(getSev(ins))).length,
+            medium:   insights.filter(ins => getSev(ins) === 'medium').length,
             info:     insights.filter(ins => getSev(ins) === 'info').length,
           };
           return (
@@ -98,8 +98,7 @@ export default function Insights() {
         {!loading && !error && (() => {
           const visible = insights.filter(ins => {
             const s = getSev(ins);
-            if (filter === 'priority') return ['high','medium','warning'].includes(s);
-            if (filter === 'medium') return ['medium','warning'].includes(s);
+            if (filter === 'priority') return s === 'high' || s === 'medium';
             return s === filter;
           });
           if (visible.length === 0 && insights.length > 0) {

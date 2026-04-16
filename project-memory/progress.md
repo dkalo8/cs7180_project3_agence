@@ -1,8 +1,8 @@
 # Agence — Project Progress
 
-_Last updated: 2026-04-10_
+_Last updated: 2026-04-16_
 
-## Status: ~90% complete
+## Status: ~99% complete
 
 **Deadline: April 21, 2026** (CS 7180 Project 3 — 200 pts, 20% of final grade)
 
@@ -71,8 +71,10 @@ _Last updated: 2026-04-10_
 - `e2e/tests/auth-flow.spec.js` — 4/4 passing against live Vercel URL: redirect to /login, login page form, register page form, register→dashboard flow. 2 additional tests skip unless E2E_EMAIL/E2E_PASSWORD set.
 
 ### Test suite
-- **143/143 passing** across 18 test suites (server only)
-- E2E: 4/4 passing (Playwright, Chromium, live Vercel URL)
+- **273/273 passing** across 25 test suites (server only)
+- E2E: auth-flow.spec.js + insights-expenses-flow.spec.js + main-flows.spec.js (Playwright, Chromium, live Vercel URL)
+- Mutation: Stryker score ~74.64% (spendingAgent 85.71%, anomalyAgent 71.60%, goalsAgent 65.52%)
+- Property-based: fast-check, 17 tests across spendingAgent/anomalyAgent/goalsAgent
 - Coverage: ~95% statements, ~83% branches (70% threshold enforced in CI)
 - Lint: clean
 - GitHub Actions: green ✅

@@ -72,10 +72,10 @@ describe('marketContextAgent', () => {
       expect(insight.severity).toBe('info');
     });
 
-    it('market_quote insight has severity warning for negative change', () => {
+    it('market_quote insight has severity medium for negative change 1-3%', () => {
       const results = marketContextAgent({ ...marketData, tickers: ['TSLA'] });
       const insight = results.find((i) => i.type === 'market_quote' && i.ticker === 'TSLA');
-      expect(insight.severity).toBe('warning');
+      expect(insight.severity).toBe('medium');
     });
 
     it('skips tickers missing from quotes without crashing', () => {
@@ -119,10 +119,10 @@ describe('marketContextAgent', () => {
       expect(insight.severity).toBe('info');
     });
 
-    it('market_sentiment severity is warning for negative sentiment (score < 0.5)', () => {
+    it('market_sentiment severity is medium for negative sentiment (score < 0.5)', () => {
       const results = marketContextAgent({ ...marketData, tickers: ['TSLA'] });
       const insight = results.find((i) => i.type === 'market_sentiment' && i.ticker === 'TSLA');
-      expect(insight.severity).toBe('warning');
+      expect(insight.severity).toBe('medium');
     });
   });
 

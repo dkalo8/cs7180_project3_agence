@@ -21,12 +21,21 @@ function marketContextAgent(marketData) {
     const quote = quotes[ticker];
     if (quote) {
       const direction = quote.changePercent >= 0 ? 'up' : 'down';
-      const absPct = Math.abs(quote.changePercent).toFixed(2);
+      const absPct = Math.abs(quote.changePercent);
+      const absPctStr = absPct.toFixed(2);
+      let severity;
+      if (quote.changePercent >= 0 || absPct < 1) {
+        severity = 'info';
+      } else if (absPct < 3) {
+        severity = 'medium';
+      } else {
+        severity = 'high';
+      }
       insights.push({
         type: 'market_quote',
         ticker,
-        message: `${ticker} is $${quote.price.toFixed(2)}, ${direction} ${absPct}% today`,
-        severity: quote.changePercent >= 0 ? 'info' : 'warning',
+        message: `${ticker} is $${quote.price.toFixed(2)}, ${direction} ${absPctStr}% today`,
+        severity,
       });
     }
 
@@ -36,7 +45,7 @@ function marketContextAgent(marketData) {
         type: 'market_sentiment',
         ticker,
         message: `${ticker} news: ${article.headline}`,
-        severity: article.sentimentScore >= 0.5 ? 'info' : 'warning',
+        severity: article.sentimentScore >= 0.5 ? 'info' : 'medium',
       });
     }
 

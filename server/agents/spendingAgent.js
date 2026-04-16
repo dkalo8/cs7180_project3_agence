@@ -51,7 +51,7 @@ function spendingAgent(userData, _marketData) {
       insights.push({
         type: 'category_spike',
         message: `${category} is ${Math.round(pct)}% of total spend`,
-        severity: 'warning',
+        severity: 'medium',
       });
     }
   });
@@ -64,7 +64,7 @@ function spendingAgent(userData, _marketData) {
       insights.push({
         type: 'monthly_increase',
         message: `Spending up ${Math.round(changePct)}% vs last month`,
-        severity: 'warning',
+        severity: 'medium',
       });
     }
   }
