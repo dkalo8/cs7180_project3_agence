@@ -1,6 +1,6 @@
 # Agence — Project Progress
 
-_Last updated: 2026-04-16_
+_Last updated: 2026-04-17_
 
 ## Status: ~99% complete
 
@@ -32,10 +32,12 @@ _Last updated: 2026-04-16_
 - `server/routes/insights.js` — GET /api/v1/insights (orchestrator → judge pipeline). 4 tests.
 - `server/routes/accounts.js` — POST /link-token + POST /exchange (Plaid). 6 tests. ✅
 - `server/routes/portfolio.js` — GET /portfolio (Alpaca positions + P&L). 5 tests. ✅
-- `server/routes/trades.js` — POST /trades + GET /trades (paper trade via Alpaca). 8 tests. ✅
+- `server/routes/trades.js` — POST /trades + GET /trades (paper trade via Alpaca). 12 tests. ✅
+- `server/routes/tickers.js` — GET /tickers/search?q= (Alpaca asset autocomplete, 6h cache). ✅
 - `server/routes/goals.js` — GET /goals + POST /goals (savings goals). 6 tests. ✅
 - `server/services/plaid.js` — Plaid SDK wrapper (link token, exchange, transactions, balances). ✅
-- `server/services/alpaca.js` — Alpaca SDK wrapper (positions, account, snapshots, placeOrder). ✅
+- `server/services/alpaca.js` — Alpaca SDK wrapper (positions, account, snapshots, placeOrder, getClock, searchAssets with 6h cache). ✅
+- `client/src/components/TickerAutocomplete.js` — debounced live ticker search component (250ms, used in Portfolio + Watchlist). ✅
 
 ### Frontend (complete)
 - React Router with protected routes (PrivateRoute → /login redirect)
@@ -71,7 +73,7 @@ _Last updated: 2026-04-16_
 - `e2e/tests/auth-flow.spec.js` — 4/4 passing against live Vercel URL: redirect to /login, login page form, register page form, register→dashboard flow. 2 additional tests skip unless E2E_EMAIL/E2E_PASSWORD set.
 
 ### Test suite
-- **273/273 passing** across 25 test suites (server only)
+- **274/274 passing** across 25 test suites (server only)
 - E2E: auth-flow.spec.js + insights-expenses-flow.spec.js + main-flows.spec.js (Playwright, Chromium, live Vercel URL)
 - Mutation: Stryker score ~74.64% (spendingAgent 85.71%, anomalyAgent 71.60%, goalsAgent 65.52%)
 - Property-based: fast-check, 17 tests across spendingAgent/anomalyAgent/goalsAgent
