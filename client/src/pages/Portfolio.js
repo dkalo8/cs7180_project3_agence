@@ -25,6 +25,7 @@ export default function Portfolio() {
   const [tradeError, setTradeError] = useState('');
   const [tradeSuccess, setTradeSuccess] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [copiedOrderId, setCopiedOrderId] = useState(null);
 
   function fetchPortfolio() {
     return getPortfolio()
@@ -219,8 +220,20 @@ export default function Portfolio() {
                       <td>{t.quantity}</td>
                       <td>${parseFloat(t.price || 0).toFixed(2)}</td>
                       <td>${(parseFloat(t.price || 0) * t.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td title={t.alpaca_order_id || ''} style={{ cursor: t.alpaca_order_id ? 'help' : 'default', color: '#94a3b8', fontSize: '0.8rem' }}>
-                        {t.alpaca_order_id ? 'ⓘ' : ''}
+                      <td style={{ fontSize: '0.8rem' }}>
+                        {t.alpaca_order_id && (
+                          <button
+                            title={t.alpaca_order_id}
+                            onClick={() => {
+                              navigator.clipboard.writeText(t.alpaca_order_id);
+                              setCopiedOrderId(t.id);
+                              setTimeout(() => setCopiedOrderId(null), 1500);
+                            }}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: copiedOrderId === t.id ? '#16a34a' : '#94a3b8', fontSize: '0.8rem', padding: 0 }}
+                          >
+                            {copiedOrderId === t.id ? '✓' : 'ⓘ'}
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}
