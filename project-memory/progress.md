@@ -199,3 +199,12 @@ _Last updated: 2026-04-17_
 - Email: SendGrid HTTPS API now primary (Render free tier blocks SMTP). `@sendgrid/mail` installed. SENDGRID_API_KEY + SENDGRID_FROM env vars on Render.
 - fixes.md cleared.
 - **Next: Step 5 polish backlog (responsive CSS, drag-drop goals, etc.)**
+
+**Session 2026-04-17 (Pre-Submission & Phase 11):**
+- **Insight Improvements** ✅ — Added severity filtering with count badges, "All" filter, and standardized severity levels. Added an empty insight guard for graceful handling when the judge returns empty/null.
+- **Chat UX** ✅ — Replaced text inputs with multiline textareas (Shift+Enter for newline, Enter to send). Removed emojis from AI responses and the About page, replacing them with SVG icons.
+- **Trade History & After-Hours UX** ✅ — Detected after-hours orders via `getClock` Alpaca API. Updated UI to show "Order queued — market closed, executes at open" and added Alpaca order IDs with clipboard copy functionality and expandable row details.
+- **Ticker Autocomplete** ✅ — Built `TickerAutocomplete.js` (250ms debounce) for Portfolio buy/sell and Watchlist add fields. Driven by new `GET /tickers/search?q=` route with 6h cache. Avoids wrong-stock entry errors.
+- **Documentation & Setup** ✅ — Removed Plaid sandbox instructions from README (grading uses standard mock account). Documented Neon DB migration decision for post-project in `docs/post-p3.md`.
+- **E2E Tests** ✅ — Hardened Playwright tests to cover the new insights filters and elements.
+- **Status** — Pre-Submission and Phase 11 complete. 274/274 tests passing. Next and final step: Screencast recording and Blog publishing.
