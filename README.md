@@ -119,7 +119,7 @@ flowchart TD
     PA --> SA & AN & GA & PF & MC & AP & WA
     SA & AN & GA -->|userData| Plaid
     PF & MC & AP & WA -->|marketData| Alpaca
-    MC -->|news| Finnhub
+    MC & WA -->|news| Finnhub
     PA -->|agentOutputs| JU
     JU -->|ranked insights| Claude
     QS <-->|pool.query| PG
