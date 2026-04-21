@@ -33,3 +33,17 @@ Running log of key decisions and their rationale.
 ### TDD discipline (red-green-refactor)
 **Decision**: Tests written before implementation. Never implement beyond what failing tests require.
 **Why**: Project requirement + proven to produce better-designed agents. Both spendingAgent and marketContextAgent were implemented this way — both have clean, well-bounded interfaces as a result.
+
+## Final Presentation Design Decisions (2026-04-21)
+
+### Synthesis over Aggregation
+Prioritized "Cognitive Load Reduction" by using a Judge LLM to distill 20+ raw agent observations into a single prioritized feed of insights. The UI focuses on "The One Thing That Matters" rather than a firehose of alerts.
+
+### Pure-Function Agent Boundaries
+Enforced a rule that agents have zero I/O and zero database calls. They are input-to-output logic blocks only. This made the system 100% unit-testable and allowed for trivial parallelization via `Promise.all`.
+
+### Strategy-First Caching
+Implemented an eager "pre-warm" cache on Dashboard mount to hide the latency of multiple financial API calls (Plaid + Alpaca + Finnhub). This moved perceived latency to the background, making the UI feel fast even with heavy data requirements.
+
+### Constraint-First Development
+Used `CLAUDE.md` as an automated policy enforcer rather than just a set of instructions. Enforced strict data boundaries (e.g., Plaid agents cannot see Alpaca data) to prevent "agent drift" and ensure insight purity.
